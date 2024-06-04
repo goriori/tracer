@@ -4,10 +4,7 @@ export class EChart {
     constructor(element) {
         this.element = element;
         this.chart = null;
-        this.coordinates = [
-            [110.6189462165178, 456.64349563895087],
-            [124.10988522879458, 450.8570048730469],
-        ]
+        this.coordinates = [[110,450]]
         this.region = [
             {
                 name: 'TEST NAME',
@@ -97,6 +94,7 @@ export class EChart {
 
     addCoordinates(coordinates) {
         this.coordinates.push(coordinates);
+        console.log(this.coordinates)
         this.render();
     }
 
