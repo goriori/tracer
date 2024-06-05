@@ -2,7 +2,7 @@
 defineProps({
   title: {
     type: String,
-    default: ' '
+    default: ''
   },
   icon: {
     type: Object,
@@ -18,21 +18,36 @@ defineProps({
     <div class="icon" v-if="icon">
       <component :is="icon"/>
     </div>
-    <p v-if="title">{{ title }}</p>
+    <p v-if="title.length > 0">{{ title }}</p>
   </button>
 </template>
 
 <style scoped lang="scss">
-button {
+.icon {
   width: 100%;
   height: 100%;
+  min-width: 30px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+button {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
   border-radius: 10px;
   background: #5696ff;
   color: white;
-  font-weight: 700;
   padding: 10px;
   transition: 0.3s all ease-in-out;
 
@@ -43,5 +58,8 @@ button {
   &:active {
     transform: scale(90%);
   }
+
+
 }
+
 </style>
