@@ -4,15 +4,12 @@ import {useBrashStore} from "@/store/brashStore.js";
 import {useTracerStore} from "@/store/tracerStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
 import {useRegionStore} from "@/store/regionStore.js";
-import ColorButton from "@/components/ui/button/color/color-button.vue";
-import EditButton from "@/components/ui/button/edit/edit-button.vue";
-import Header from "@/components/header/header.vue";
-import DrawAction from "@/actions/draw/draw-action.vue";
-import ClearAction from "@/actions/clear/clear-action.vue";
-import BrushAction from "@/actions/brush/brush-action.vue";
 import {useApplicationStore} from "@/store/applicationStore.js";
 import {EChart} from "@/entities/echart/index.js";
+import Header from "@/components/header/header.vue";
 import Footer from "@/components/footer/footer.vue";
+import Aside from "@/components/aside/aside.vue";
+import {Region} from "@/entities/region/index.js";
 
 
 const applicationStore = useApplicationStore()
@@ -30,9 +27,7 @@ const events = {
   stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  change_brush: () => {
-    chart.value.changeBrush(brushStore.brush)
-  }
+  change_brush: () => chart.value.changeBrush(brushStore.brush)
 }
 
 const eventTargetElementHandler = (event) => {
@@ -51,13 +46,25 @@ const initChart = () => {
   chart.value.init()
   chart.value.registerMap(map.name, map.mapSvgText)
   chart.value.setRegions(regionStore.getRegions())
-  chart.value.on('click', (event) => {
-    if (!event.region) return false
-    const coordinateRegion = [event.event.offsetX, event.event.offsetY]
+  chart.value.on('click', chartObjectClick)
+}
+
+const chartObjectClick = (event) => {
+  if (!event.region) return false
+  const region = new Region(event.region.name)
+  const coordinatesRegion = coordinatorStore.getCoordinates(region.name)
+  if (coordinatesRegion) {
+    chart.value.setCoordinates(coordinatesRegion)
+  } else {
+    const {offsetX, offsetY} = event.event
+    const coordinateRegion = [offsetX, offsetY]
     const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
-    regionStore.setRegion(event.region)
-    chart.value.setCoordinates([[x, y], [x + 1, y + 1]])
-  })
+    const startCoordinates = [[x, y], [x + 1, y + 1]]
+    startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
+    regionStore.setRegion(region)
+    chart.value.setCoordinates(startCoordinates)
+
+  }
 }
 
 const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
@@ -85,13 +92,7 @@ onMounted(async () => {
   <div class="page">
     <h1>Редактор (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
-    <aside>
-      <ColorButton class="action"/>
-      <EditButton class="action"/>
-      <BrushAction @change-brush="onUpdate"/>
-      <DrawAction @start-drawing="onUpdate" @stop-drawing="onUpdate" class="action"/>
-      <ClearAction @clear="onUpdate" class="action"/>
-    </aside>
+    <Aside @event-update="onUpdate"/>
     <div class="tracer" id="tracer" ref="targetElement">
       <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
     </div>

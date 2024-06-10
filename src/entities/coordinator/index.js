@@ -6,7 +6,7 @@ export class Coordinator {
     addCoordinate(name, coordinate) {
         const nameExist = this.coordinates.find(c => c.name === name);
         if (!nameExist) {
-            this.coordinates.push({name, coordinates: []})
+            this.coordinates.push({name, coordinates: [[...coordinate]]})
         } else {
             const coordinatorObject = this.coordinates.find(c => c.name === name);
             coordinatorObject.coordinates.push(coordinate);
@@ -14,11 +14,15 @@ export class Coordinator {
     }
 
     getCoordinates(name) {
+        const nameObject = this.coordinates.find(object => object.name === name)
+        if (!nameObject) return null
         return this.coordinates.find(c => c.name === name).coordinates;
     }
+
     getCoordinateAll() {
         return this.coordinates
     }
+
     clearCoordinates() {
         this.coordinates = [];
     }
