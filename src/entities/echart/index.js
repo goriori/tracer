@@ -4,51 +4,49 @@ export class EChart {
     constructor(element) {
         this.element = element;
         this.chart = null;
-        this.mapSvg = null
+        this.mapSvgText = null
         this.coordinates = [[110, 450], [150, 480]]
-        this.region = [
-            {
-                name: 'OBJECT',
-                data: {
-                    id: 1,
-                    routes: [],
-                },
-            },
-            {
-                name: 'OBJECT_2',
-                data: {
-                    id: 1,
-                    routes: [],
-                },
-            },
-        ]
+        this.regions = []
+        this.lineStyle = {
+            color: '#c46e54',
+            width: 5,
+            opacity: 1,
+            type: 'dotted'
+        }
         this.options = {
             title: {
                 text: 'Расчерчиватель',
                 left: 'center',
                 bottom: 10
             },
+            tooltip: {},
             geo: {
                 map: null,
                 roam: true,
+                label: {
+                    show: false
+                },
                 emphasis: {
                     itemStyle: {
                         color: undefined
                     },
                     label: {
-                        show: true
+                        show: false
                     }
                 },
                 select: {
                     itemStyle: {
                         color: 'red',
                     },
+                    label: {
+                        color: 'red'
+                    }
                 },
-                regions: [...this.region]
+                regions: [...this.regions]
             },
             series: [
                 {
-                    name: 'ААА',
+                    name: 'Tracer',
                     type: 'lines',
                     coordinateSystem: 'geo',
                     geoIndex: 0,
@@ -58,12 +56,7 @@ export class EChart {
                         }
                     },
                     polyline: true,
-                    lineStyle: {
-                        color: '#c46e54',
-                        width: 5,
-                        opacity: 1,
-                        type: 'dashed'
-                    },
+                    lineStyle: {...this.lineStyle},
                     effect: {
                         show: true,
                         period: 8,
@@ -87,8 +80,8 @@ export class EChart {
 
     registerMap(name, map) {
         this.options.geo.map = name;
-        this.mapSvg = map
-        echarts.registerMap(name, {svg: this.mapSvg});
+        this.mapSvgText = map
+        echarts.registerMap(name, {svg: this.mapSvgText});
     }
 
     computedCoordinatesFromPixel(coordinates = [0, 0]) {
@@ -116,13 +109,33 @@ export class EChart {
 
     render() {
         console.log('render')
+        console.log(this.options)
         this.chart.setOption(this.options);
+        console.log('options', this.chart.getOption())
     }
 
     setCoordinates(coordinates) {
         this.coordinates = coordinates;
         this.options.series[0].data[0].coords = this.coordinates;
         this.render();
+    }
+
+    setRegions(regions) {
+        this.regions = regions
+
+        this.render()
+    }
+
+    changeBrush(brush) {
+        this.lineStyle.type = brush
+        this.options.series[0].lineStyle = this.lineStyle
+        this.render()
+    }
+
+    changeBrushColor(color) {
+        this.lineStyle.color = color
+        this.options.series[0].lineStyle = this.lineStyle
+        this.render()
     }
 
     destroy() {

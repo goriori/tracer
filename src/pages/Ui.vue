@@ -8,7 +8,9 @@ import Color from "@/components/ui/icons/color.vue";
 import Paint from "@/components/ui/icons/paint.vue";
 import Clear from "@/components/ui/icons/clear.vue";
 import Edit from "@/components/ui/icons/edit.vue";
-import Button from  "@/components/ui/button/button.vue";
+import Button from "@/components/ui/button/button.vue";
+import DropDown from "@/components/ui/drop-down/drop-down.vue";
+import BrushDropDown from "@/components/ui/drop-down/brush/brush-drop-down.vue";
 </script>
 
 <template>
@@ -34,6 +36,13 @@ import Button from  "@/components/ui/button/button.vue";
         <Button :icon="Paint" title="Button title" class="btn"/>
       </div>
     </section>
+    <section class="page-section">
+      <h3>Drop down</h3>
+      <div class="page-section-content">
+        <DropDown :list="[ColorButton, PaintButton,ClearButton,EditButton]"/>
+        <BrushDropDown/>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -51,6 +60,7 @@ import Button from  "@/components/ui/button/button.vue";
 
   &-section {
     width: 100%;
+    height: 100%;
     max-width: 400px;
     max-height: 300px;
     display: flex;
@@ -59,6 +69,8 @@ import Button from  "@/components/ui/button/button.vue";
     gap: 20px;
 
     &-content {
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-items: center;

@@ -16,7 +16,9 @@ export class Coordinator {
     getCoordinates(name) {
         return this.coordinates.find(c => c.name === name).coordinates;
     }
-
+    getCoordinateAll() {
+        return this.coordinates
+    }
     clearCoordinates() {
         this.coordinates = [];
     }
