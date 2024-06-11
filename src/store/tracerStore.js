@@ -15,7 +15,7 @@ export const useTracerStore = defineStore('tracer', () => {
 
     const clear = () => tracer.value.clear()
     const draw = (type, object, coordinates) => tracer.value.draw(type, object, coordinates)
-
+    const getHistory = () => tracer.value.getHistory()
     return {
         tracer,
         getStateTracer,
@@ -23,6 +23,7 @@ export const useTracerStore = defineStore('tracer', () => {
         start,
         stop,
         clear,
-        draw
+        draw,
+        getHistory
     }
 })

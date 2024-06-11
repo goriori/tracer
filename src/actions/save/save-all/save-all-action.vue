@@ -5,9 +5,11 @@ import {SaverJsonTracker} from "@/entities/saver-tracker/saver-json-tracker/inde
 import {useApplicationStore} from "@/store/applicationStore.js";
 import {useRegionStore} from "@/store/regionStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
+import {useTracerStore} from "@/store/tracerStore.js";
 
 const emits = defineEmits(['save'])
 const applicationStore = useApplicationStore()
+const tracerStore = useTracerStore()
 const regionStore = useRegionStore()
 const coordinatorStore = useCoordinatorStore()
 const save = () => {
@@ -15,6 +17,9 @@ const save = () => {
     map: {
       mapSvgTxt: applicationStore.svgMap.mapSvgText,
       mapDom: applicationStore.svgMap.mapSvgDOM
+    },
+    tracer: {
+      history: tracerStore.getHistory()
     },
     regions: regionStore.getRegions(),
     coordinates: coordinatorStore.getCoordinateAll()
