@@ -5,13 +5,15 @@ import {useTracerStore} from "@/store/tracerStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
 import {useRegionStore} from "@/store/regionStore.js";
 import {useApplicationStore} from "@/store/applicationStore.js";
+import {useStateStore} from "@/store/stateStore.js";
 import {EChart} from "@/entities/echart/index.js";
+import {Region} from "@/entities/region/index.js";
 import Header from "@/components/header/header.vue";
 import Footer from "@/components/footer/footer.vue";
 import Aside from "@/components/aside/aside.vue";
-import {Region} from "@/entities/region/index.js";
+import Modals from "@/components/modals/modals.vue";
 
-
+const stateStore = useStateStore()
 const applicationStore = useApplicationStore()
 const brushStore = useBrashStore()
 const regionStore = useRegionStore()
@@ -20,25 +22,44 @@ const coordinatorStore = useCoordinatorStore()
 const targetElement = ref(null)
 const chart = ref(null)
 
-const events = {
+const appEvents = {
   download_map: () => initChart(),
   download_json: () => initChart(),
   start_drawing: () => targetElement.value.addEventListener('click', eventTargetElementHandler),
   stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  change_brush: () => chart.value.changeBrush(brushStore.brush)
+  change_brush: () => setBrush()
+}
+
+const modalEvents = {
+  confirm_delete: () => {
+    const targetRegion = regionStore.getTargetRegion()
+    coordinatorStore.deleteCoordinatesObject(targetRegion.name)
+    stateStore.toggleModal('delete_route')
+    chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
+  },
+  cancel_delete: () => stateStore.toggleModal('delete_route')
+}
+
+const objectTypeEvents = {
+  geo: (event) => geoObjectHandler(event),
+  series: (event) => seriesObjectHandler(event)
 }
 
 const eventTargetElementHandler = (event) => {
   const listenerHandlers = {
     click: (event) => onClick(event)
   }
-  return listenerHandlers[event.type](event)
+  if (event.type in listenerHandlers) return listenerHandlers[event.type](event)
 }
 
 const onUpdate = (type) => {
-  if (type in events) events[type]()
+  if (type in appEvents) appEvents[type]()
+}
+
+const onModalUpdate = (type) => {
+  if (type in modalEvents) modalEvents[type]()
 }
 
 const initChart = () => {
@@ -50,21 +71,33 @@ const initChart = () => {
 }
 
 const chartObjectClick = (event) => {
+  if (event.componentType in objectTypeEvents) objectTypeEvents[event.componentType](event)
+}
+
+const geoObjectHandler = (event) => {
   if (!event.region) return false
   const region = new Region(event.region.name)
   const coordinatesRegion = coordinatorStore.getCoordinates(region.name)
-  if (coordinatesRegion) {
+  if (coordinatesRegion && coordinatesRegion.length > 2) {
     chart.value.setCoordinates(coordinatesRegion)
+    regionStore.setRegion(region)
   } else {
     const {offsetX, offsetY} = event.event
     const coordinateRegion = [offsetX, offsetY]
     const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
+    const haveStartPosition = coordinatorStore.getCoordinates(region.name)
     const startCoordinates = [[x, y], [x + 1, y + 1]]
-    startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
+    if (!haveStartPosition || haveStartPosition.length === 0) {
+      startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
+    }
     regionStore.setRegion(region)
     chart.value.setCoordinates(startCoordinates)
-
   }
+}
+
+const seriesObjectHandler = (event) => {
+  if (event.componentSubType !== 'lines') return false
+  stateStore.toggleModal('delete_route')
 }
 
 const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
@@ -79,6 +112,7 @@ const onClick = (event) => {
   chart.value.addCoordinates(convertedCoordinates)
 }
 
+const setBrush = () => chart.value.changeBrush(brushStore.brush)
 
 onMounted(async () => {
   if (targetElement.value) chart.value = new EChart(targetElement.value)
@@ -90,6 +124,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="page">
+    <Modals @event-update="onModalUpdate"/>
     <h1>Редактор (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
