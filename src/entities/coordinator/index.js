@@ -23,6 +23,10 @@ export class Coordinator {
         return this.coordinates
     }
 
+    deleteCoordinatesObject(name) {
+        this.coordinates.find(object => object.name === name).coordinates = []
+    }
+
     clearCoordinates() {
         this.coordinates = [];
     }
