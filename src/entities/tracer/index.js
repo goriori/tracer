@@ -1,5 +1,3 @@
-import {EChart} from "@/entities/echart/index.js";
-
 export class Tracer {
 
     constructor() {
@@ -36,6 +34,10 @@ export class Tracer {
         if (this.history.length > 0) {
             return this.history.pop()
         }
+    }
+
+    getHistory() {
+        return this.history
     }
 
     clear() {
