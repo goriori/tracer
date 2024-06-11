@@ -33,12 +33,7 @@ const appEvents = {
 }
 
 const modalEvents = {
-  confirm_delete: () => {
-    const targetRegion = regionStore.getTargetRegion()
-    coordinatorStore.deleteCoordinatesObject(targetRegion.name)
-    stateStore.toggleModal('delete_route')
-    chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
-  },
+  confirm_delete: () => deleteRoute(),
   cancel_delete: () => stateStore.toggleModal('delete_route')
 }
 
@@ -100,6 +95,12 @@ const seriesObjectHandler = (event) => {
   stateStore.toggleModal('delete_route')
 }
 
+const deleteRoute = () => {
+  const targetRegion = regionStore.getTargetRegion()
+  coordinatorStore.deleteCoordinatesObject(targetRegion.name)
+  stateStore.toggleModal('delete_route')
+  chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
+}
 const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
 
 const onClick = (event) => {

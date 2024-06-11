@@ -19,6 +19,7 @@ export const useTracerStore = defineStore('tracer', () => {
     const backStep = () => tracer.value.backStep()
 
     const getHistory = () => tracer.value.getHistory()
+
     return {
         tracer,
         getStateTracer,
@@ -27,7 +28,7 @@ export const useTracerStore = defineStore('tracer', () => {
         stop,
         clear,
         draw,
-        backStep
+        backStep,
         getHistory
 
     }
