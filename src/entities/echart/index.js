@@ -90,7 +90,6 @@ export class EChart {
 
     addCoordinates(coordinates) {
         this.coordinates.push(coordinates);
-        console.log('coordinates', this.coordinates);
         this.render();
     }
 
@@ -109,9 +108,7 @@ export class EChart {
 
     render() {
         console.log('render')
-        console.log(this.options)
         this.chart.setOption(this.options);
-        console.log('options', this.chart.getOption())
     }
 
     setCoordinates(coordinates) {
@@ -122,7 +119,6 @@ export class EChart {
 
     setRegions(regions) {
         this.regions = regions
-
         this.render()
     }
 

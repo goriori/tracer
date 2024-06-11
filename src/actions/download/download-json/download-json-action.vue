@@ -20,7 +20,6 @@ const onDownload = () => {
     const file = createFileInput.files[0];
     const fileTextContent = await file.text()
     const config = JSON.parse(fileTextContent)
-    console.log(config)
     await loadEntities(config)
 
   }
@@ -53,7 +52,6 @@ const loadRegions = (regions) => regions.forEach(region => regionStore.addRegion
 const loadCoordinator = (coordinates) => {
   coordinates.forEach(object => {
     object.coordinates.forEach(coordinate => {
-      console.log(coordinate, object.name)
       coordinatorStore.addCoordinate(object.name, coordinate)
     })
   })

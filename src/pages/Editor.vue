@@ -85,8 +85,11 @@ const geoObjectHandler = (event) => {
     const {offsetX, offsetY} = event.event
     const coordinateRegion = [offsetX, offsetY]
     const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
+    const haveStartPosition = coordinatorStore.getCoordinates(region.name)
     const startCoordinates = [[x, y], [x + 1, y + 1]]
-    startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
+    if (!haveStartPosition || haveStartPosition.length === 0) {
+      startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
+    }
     regionStore.setRegion(region)
     chart.value.setCoordinates(startCoordinates)
   }
