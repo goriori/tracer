@@ -34,8 +34,10 @@ const appEvents = {
 
 const modalEvents = {
   confirm_delete: () => {
-    coordinatorStore.deleteCoordinatesObject(regionStore.getTargetRegion().name)
+    const targetRegion = regionStore.getTargetRegion()
+    coordinatorStore.deleteCoordinatesObject(targetRegion.name)
     stateStore.toggleModal('delete_route')
+    chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
   },
   cancel_delete: () => stateStore.toggleModal('delete_route')
 }

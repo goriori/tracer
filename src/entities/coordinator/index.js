@@ -24,7 +24,10 @@ export class Coordinator {
     }
 
     deleteCoordinatesObject(name) {
-        this.coordinates.find(object => object.name === name).coordinates = []
+        const object = this.coordinates.find(object => object.name === name)
+        const coordinates = object.coordinates
+        const [x, y] = coordinates[0]
+        object.coordinates = [[x, y], [x + 1, y + 1]]
     }
 
     clearCoordinates() {
