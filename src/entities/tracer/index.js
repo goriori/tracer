@@ -1,4 +1,3 @@
-import {EChart} from "@/entities/echart/index.js";
 
 export class Tracer {
 
@@ -34,8 +33,13 @@ export class Tracer {
 
     backStep() {
         if (this.history.length > 0) {
-            return this.history.pop()
+            this.history.pop()
+            return this.history[this.history.length - 1]
         }
+    }
+
+    getHistory() {
+        return this.history
     }
 
     clear() {

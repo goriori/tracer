@@ -114,11 +114,30 @@ const onClick = (event) => {
 
 const setBrush = () => chart.value.changeBrush(brushStore.brush)
 
+const initKeypressEvents = () => {
+
+  const keys = {
+    '\x1A': () => {
+      if (tracerStore.getHistory().length === 0) return false
+      const lastHistory = tracerStore.backStep()
+      console.log(lastHistory)
+      chart.value.removeLastCoordinates()
+    }
+  }
+
+  window.addEventListener('keypress', (event) => {
+    if (event.key in keys) keys[event.key]()
+    console.log(event)
+  })
+
+}
+
 onMounted(async () => {
   if (targetElement.value) chart.value = new EChart(targetElement.value)
   tracerStore.init()
   coordinatorStore.init()
   brushStore.init()
+  initKeypressEvents()
 })
 
 </script>
