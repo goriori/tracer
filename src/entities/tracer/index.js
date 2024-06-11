@@ -1,3 +1,4 @@
+
 export class Tracer {
 
     constructor() {
@@ -32,7 +33,8 @@ export class Tracer {
 
     backStep() {
         if (this.history.length > 0) {
-            return this.history.pop()
+            this.history.pop()
+            return this.history[this.history.length - 1]
         }
     }
 
