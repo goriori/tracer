@@ -29,7 +29,10 @@ const appEvents = {
   stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  change_brush: () => setBrush()
+  change_brush: () => {
+    setBrush()
+    console.log(chart.value)
+  }
 }
 
 const modalEvents = {
@@ -113,7 +116,7 @@ const onClick = (event) => {
   chart.value.addCoordinates(convertedCoordinates)
 }
 
-const setBrush = () => chart.value.changeBrush(brushStore.brush)
+const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
 
 const initKeypressEvents = () => {
 
@@ -121,14 +124,12 @@ const initKeypressEvents = () => {
     '\x1A': () => {
       if (tracerStore.getHistory().length === 0) return false
       const lastHistory = tracerStore.backStep()
-      console.log(lastHistory)
       chart.value.removeLastCoordinates()
     }
   }
 
   window.addEventListener('keypress', (event) => {
     if (event.key in keys) keys[event.key]()
-    console.log(event)
   })
 
 }

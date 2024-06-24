@@ -6,11 +6,16 @@ export class Brush {
     }
 
     changeBrush(brush = this.brushTypes[0]) {
+        console.log(brush)
         if (!this.brushTypes.includes(brush)) return false
         this.brush = brush
     }
 
     changeColor(color) {
         this.color = color
+    }
+
+    getBrush() {
+        return this.brush
     }
 }

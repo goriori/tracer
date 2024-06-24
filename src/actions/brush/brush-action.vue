@@ -19,7 +19,7 @@ const changeBrushHandler = (brush) => {
 }
 const changeBrush = (brush) => {
   if (!changeEvents[brush]) return false
-  return changeEvents[brush]()
+  return changeEvents[brush](brush)
 }
 
 </script>
