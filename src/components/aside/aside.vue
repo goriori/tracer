@@ -1,11 +1,12 @@
 <script setup>
 
 import BrushAction from "@/actions/brush/brush-action.vue";
-import ClearAction from "@/actions/clear/clear-action.vue";
+import ClearAction from "@/actions/clear/clear-all/clear-action.vue";
 import ColorButton from "@/components/ui/button/color/color-button.vue";
 import DrawAction from "@/actions/draw/draw-action.vue";
 import EditButton from "@/components/ui/button/edit/edit-button.vue";
 import BrushColorAction from "@/actions/brush-color/brush-color-action.vue";
+import ClearCoordinate from "@/actions/clear/clear-coordinate/clear-coordinate.vue";
 
 const emits = defineEmits(['event-update'])
 
@@ -14,7 +15,9 @@ const actionsEmits = {
   change_brush: (type) => eventUpdate(type),
   start_drawing: (type) => eventUpdate(type),
   stop_drawing: (type) => eventUpdate(type),
-  clear_all: (type) => eventUpdate(type)
+  clear_all: (type) => eventUpdate(type),
+  start_clear_coordinate: (type) => eventUpdate(type),
+  stop_clear_coordinate: (type) => eventUpdate(type)
 }
 
 const eventUpdate = (type) => emits('event-update', type)
@@ -30,6 +33,7 @@ const onEmitHandler = (type) => {
     <BrushAction @change-brush="onEmitHandler"/>
     <DrawAction @start-drawing="onEmitHandler" @stop-drawing="onEmitHandler" class="action"/>
     <ClearAction @clear="onEmitHandler" class="action"/>
+    <ClearCoordinate @clear="onEmitHandler" class="action"/>
   </aside>
 </template>
 

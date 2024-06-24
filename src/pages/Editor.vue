@@ -27,6 +27,8 @@ const appEvents = {
   download_json: () => initChart(),
   start_drawing: () => targetElement.value.addEventListener('click', eventTargetElementHandler),
   stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
+  start_clear_coordinate: () => targetElement.value.addEventListener('click', eventTargetElementHandler),
+  stop_clear_coordinate: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
   change_brush_color: () => {
     setBrushColor()
     coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
