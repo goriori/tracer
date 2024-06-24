@@ -27,13 +27,13 @@ const appEvents = {
   download_json: () => initChart(),
   start_drawing: () => targetElement.value.addEventListener('click', eventTargetElementHandler),
   stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
-  change_brush_color: () => setBrushColor(),
+  change_brush_color: () => {
+    setBrushColor()
+    coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
+  },
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  change_brush: () => {
-    setBrush()
-    console.log(chart.value)
-  }
+  change_brush: () => setBrush()
 }
 
 const modalEvents = {
@@ -77,8 +77,10 @@ const geoObjectHandler = (event) => {
   if (!event.region) return false
   const region = new Region(event.region.name)
   const coordinatesRegion = coordinatorStore.getCoordinates(region.name)
+  const coordinateOption = coordinatorStore.getCoordinateOption(region.name)
   if (coordinatesRegion && coordinatesRegion.length > 2) {
     chart.value.setCoordinates(coordinatesRegion)
+    chart.value.changeBrushColor(coordinateOption.color)
     regionStore.setRegion(region)
   } else {
     const {offsetX, offsetY} = event.event
@@ -119,8 +121,9 @@ const onClick = (event) => {
 
 const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
 const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
-const initKeypressEvents = () => {
 
+
+const initKeypressEvents = () => {
   const keys = {
     '\x1A': () => {
       if (tracerStore.getHistory().length === 0) return false
@@ -128,11 +131,9 @@ const initKeypressEvents = () => {
       chart.value.removeLastCoordinates()
     }
   }
-
   window.addEventListener('keypress', (event) => {
     if (event.key in keys) keys[event.key]()
   })
-
 }
 
 onMounted(async () => {
