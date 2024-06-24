@@ -21,12 +21,14 @@ const initEvents = () => {
     const eventName = brushButton.__name
     const brush = eventName.split('-')[0]
     events[eventName] = () => emits('change-brush', brush)
+
   })
   return events
 }
 
 onMounted(() => {
   brushesEvents.value = initEvents()
+  console.log(brushesEvents.value)
 })
 </script>
 

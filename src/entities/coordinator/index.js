@@ -6,20 +6,33 @@ export class Coordinator {
     addCoordinate(name, coordinate) {
         const nameExist = this.coordinates.find(c => c.name === name);
         if (!nameExist) {
-            this.coordinates.push({name, coordinates: [[...coordinate]]})
+            this.coordinates.push({name, option: {color: '#c46e54'}, coordinates: [[...coordinate]]})
         } else {
             const coordinatorObject = this.coordinates.find(c => c.name === name);
             coordinatorObject.coordinates.push(coordinate);
         }
     }
 
+    setOptionCoordinate(name, option) {
+        const coordinateObject = this.coordinates.find(coordinate => coordinate.name === name)
+        if (!coordinateObject) return
+        Object.assign(coordinateObject.option, option)
+    }
+
+    getCoordinateOption(name) {
+        const coordinateObject = this.coordinates.find(coordinate => coordinate.name === name)
+        if (!coordinateObject) return
+        return coordinateObject.option
+    }
+
     getCoordinates(name) {
-        const nameObject = this.coordinates.find(object => object.name === name)
-        if (!nameObject) return null
+        const coordinateObject = this.coordinates.find(object => object.name === name)
+        if (!coordinateObject) return null
         return this.coordinates.find(c => c.name === name).coordinates;
     }
 
     getCoordinateAll() {
+        console.log(this.coordinates)
         return this.coordinates
     }
 

@@ -9,8 +9,10 @@ export const useCoordinatorStore = defineStore('coordinator', () => {
     const addCoordinate = (name, coordinate) => coordinator.value.addCoordinate(name, coordinate)
     const clearCoordinates = (name) => coordinator.value.clearCoordinates()
     const getCoordinates = (name) => coordinator.value.getCoordinates(name)
+    const getCoordinateOption = (name) => coordinator.value.getCoordinateOption(name)
     const getCoordinateAll = () => coordinator.value.getCoordinateAll()
     const deleteCoordinatesObject = (name) => coordinator.value.deleteCoordinatesObject(name)
+    const setOptionCoordinate = (name, option) => coordinator.value.setOptionCoordinate(name, option)
     return {
         coordinator,
         init,
@@ -18,6 +20,8 @@ export const useCoordinatorStore = defineStore('coordinator', () => {
         addCoordinate,
         clearCoordinates,
         getCoordinateAll,
+        getCoordinateOption,
         deleteCoordinatesObject,
+        setOptionCoordinate,
     }
 })

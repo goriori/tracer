@@ -53,6 +53,7 @@ const loadCoordinator = (coordinates) => {
   coordinates.forEach(object => {
     object.coordinates.forEach(coordinate => {
       coordinatorStore.addCoordinate(object.name, coordinate)
+      coordinatorStore.setOptionCoordinate(object.name, object.option)
     })
   })
 }
