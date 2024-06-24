@@ -18,4 +18,8 @@ export class Brush {
     getBrush() {
         return this.brush
     }
+
+    getColor() {
+        return this.color
+    }
 }

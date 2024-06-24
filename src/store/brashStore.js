@@ -14,11 +14,13 @@ export const useBrashStore = defineStore('brash', () => {
         brush.value.changeColor(color)
     }
     const getBrush = () => brush.value.getBrush()
+    const getColor = () => brush.value.getColor()
     return {
         brush,
         init,
         changeBrush,
         changeColor,
-        getBrush
+        getBrush,
+        getColor
     }
 })

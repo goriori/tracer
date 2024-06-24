@@ -27,6 +27,7 @@ const appEvents = {
   download_json: () => initChart(),
   start_drawing: () => targetElement.value.addEventListener('click', eventTargetElementHandler),
   stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
+  change_brush_color: () => setBrushColor(),
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
   change_brush: () => {
@@ -117,7 +118,7 @@ const onClick = (event) => {
 }
 
 const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
-
+const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
 const initKeypressEvents = () => {
 
   const keys = {
