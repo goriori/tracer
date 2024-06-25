@@ -4,6 +4,7 @@ import {useApplicationStore} from "@/store/applicationStore.js";
 import {useRegionStore} from "@/store/regionStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
 import DownloadFileButton from "@/components/ui/button/download-file/download-file-button.vue";
+import {convertToDomElement} from "@/utils/helpers/convertDomElement.js";
 
 
 const applicationStore = useApplicationStore()
@@ -47,7 +48,7 @@ const loadEntities = (config) => new Promise((resolve, reject) => {
       emits('download', 'download_json')
     })
 
-const loadMap = (mapTxt) => applicationStore.downloadSvg(mapTxt)
+const loadMap = (mapTxt) => applicationStore.downloadSvg(convertToDomElement(mapTxt, 'image/svg+xml'))
 const loadRegions = (regions) => regions.forEach(region => regionStore.addRegion(region))
 const loadCoordinator = (coordinates) => {
   coordinates.forEach(object => {
