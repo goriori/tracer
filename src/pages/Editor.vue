@@ -19,10 +19,6 @@ const brushStore = useBrashStore()
 const regionStore = useRegionStore()
 const tracerStore = useTracerStore()
 const coordinatorStore = useCoordinatorStore()
-
-const STATES = ['tracer', 'svg_editor']
-
-const editorState = ref(STATES[0])
 const targetElement = ref(null)
 const chart = ref(null)
 
@@ -37,7 +33,8 @@ const appEvents = {
   },
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  change_brush: () => setBrush()
+  change_brush: () => setBrush(),
+  change_state_editor: () => console.log('change state editor')
 }
 
 const modalEvents = {
@@ -131,7 +128,7 @@ const onClick = (event) => {
 
 const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
 const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
-
+const setStateEditor = (state) => editorState.value = state
 
 const initKeypressEvents = () => {
   const keys = {
@@ -161,12 +158,11 @@ onMounted(async () => {
     <h1>Редактор (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
-    Состояние Редактора: {{ editorState}}
-    <div v-if="editorState === STATES[0]" class="tracer" id="tracer" ref="targetElement">
+    <div v-if="applicationStore.getStateEditor() === 'tracer'" class="tracer" id="tracer" ref="targetElement">
       <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
     </div>
-    <div v-if="editorState === STATES[1]" class="tracer" id="tracer" ref="targetElement">
-      <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
+    <div v-if="applicationStore.getStateEditor() === 'svg_editor'" class="tracer" id="tracer" ref="targetElement">
+      <p v-if="!applicationStore.svgMap">svg editor</p>
     </div>
     <Footer @event-update="onUpdate"/>
   </div>
