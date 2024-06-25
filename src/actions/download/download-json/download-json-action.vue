@@ -22,7 +22,6 @@ const onDownload = () => {
     const fileTextContent = await file.text()
     const config = JSON.parse(fileTextContent)
     await loadEntities(config)
-
   }
 }
 
