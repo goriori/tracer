@@ -26,7 +26,7 @@ const onDownload = () => {
         const attrValue = node.getAttribute('name')
         if (haveAttr) regionStore.addRegion(new Region(attrValue))
       }
-      applicationStore.downloadSvg(svgText);
+      applicationStore.downloadSvg(svgElement);
       emits("download", 'download_map');
     }
   }
