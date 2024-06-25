@@ -19,6 +19,10 @@ const brushStore = useBrashStore()
 const regionStore = useRegionStore()
 const tracerStore = useTracerStore()
 const coordinatorStore = useCoordinatorStore()
+
+const STATES = ['tracer', 'svg_editor']
+
+const editorState = ref(STATES[0])
 const targetElement = ref(null)
 const chart = ref(null)
 
@@ -43,6 +47,12 @@ const modalEvents = {
 
 
 const eventTargetElementHandler = (event) => {
+  const targetElement = event.target
+  targetElement.setAttribute('name', 'TEST')
+  const newRegion = new Region('TEST')
+  chart.value.addRegion(newRegion)
+  chart.value.render()
+  console.log(event)
   const listenerHandlers = {
     click: (event) => onClick(event)
   }
@@ -151,7 +161,11 @@ onMounted(async () => {
     <h1>Редактор (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
-    <div class="tracer" id="tracer" ref="targetElement">
+    Состояние Редактора: {{ editorState}}
+    <div v-if="editorState === STATES[0]" class="tracer" id="tracer" ref="targetElement">
+      <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
+    </div>
+    <div v-if="editorState === STATES[1]" class="tracer" id="tracer" ref="targetElement">
       <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
     </div>
     <Footer @event-update="onUpdate"/>
