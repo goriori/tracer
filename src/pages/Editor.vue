@@ -19,14 +19,15 @@ const brushStore = useBrashStore()
 const regionStore = useRegionStore()
 const tracerStore = useTracerStore()
 const coordinatorStore = useCoordinatorStore()
-const targetElement = ref(null)
+const targetTracerElement = ref(null)
+const targetSvgElement = ref(null)
 const chart = ref(null)
 
 const appEvents = {
   download_map: () => initChart(),
   download_json: () => initChart(),
-  start_drawing: () => targetElement.value.addEventListener('click', eventTargetElementHandler),
-  stop_drawing: () => targetElement.value.removeEventListener('click', eventTargetElementHandler),
+  start_drawing: () => targetTracerElement.value.addEventListener('click', eventTargetElementHandler),
+  stop_drawing: () => targetTracerElement.value.removeEventListener('click', eventTargetElementHandler),
   change_brush_color: () => {
     setBrushColor()
     coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
@@ -128,7 +129,6 @@ const onClick = (event) => {
 
 const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
 const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
-const setStateEditor = (state) => editorState.value = state
 
 const initKeypressEvents = () => {
   const keys = {
@@ -144,7 +144,7 @@ const initKeypressEvents = () => {
 }
 
 onMounted(async () => {
-  if (targetElement.value) chart.value = new EChart(targetElement.value)
+  if (targetTracerElement.value) chart.value = new EChart(targetTracerElement.value)
   tracerStore.init()
   coordinatorStore.init()
   brushStore.init()
@@ -158,10 +158,10 @@ onMounted(async () => {
     <h1>Редактор (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
-    <div v-if="applicationStore.getStateEditor() === 'tracer'" class="tracer" id="tracer" ref="targetElement">
+    <div v-if="applicationStore.getStateEditor() === 'tracer'" class="tracer" id="tracer" ref="targetTracerElement">
       <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
     </div>
-    <div v-if="applicationStore.getStateEditor() === 'svg_editor'" class="tracer" id="tracer" ref="targetElement">
+    <div v-if="applicationStore.getStateEditor() === 'svg_editor'" class="tracer" id="tracer" ref="targetSvgElement">
       <p v-if="!applicationStore.svgMap">svg editor</p>
     </div>
     <Footer @event-update="onUpdate"/>
