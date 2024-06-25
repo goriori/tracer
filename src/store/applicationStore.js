@@ -5,8 +5,8 @@ import {MapSVG} from "@/entities/map/index.js";
 
 export const useApplicationStore = defineStore('application', () => {
     const svgMap = ref(null)
-    const downloadSvg = (mapSvgText = '') => {
-        svgMap.value = new MapSVG('tracer', mapSvgText)
+    const downloadSvg = (svg) => {
+        svgMap.value = new MapSVG('tracer', svg)
     }
     const getMapSvg = () => {
         return svgMap.value

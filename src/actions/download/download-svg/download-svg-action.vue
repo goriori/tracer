@@ -22,11 +22,15 @@ const onDownload = () => {
       const svgText = reader.result;
       const svgElement = convertToDomElement(svgText, 'image/svg+xml')
       for (const node of svgElement.children) {
-        const haveAttr = node.hasAttribute('name')
-        const attrValue = node.getAttribute('name')
-        if (haveAttr) regionStore.addRegion(new Region(attrValue))
+        const haveAttr = node.hasAttribute('id')
+        const attrValue = node.getAttribute('id')
+        if (haveAttr) {
+          node.removeAttribute('id')
+          node.setAttribute('name', attrValue)
+          regionStore.addRegion(new Region(attrValue))
+        }
       }
-      applicationStore.downloadSvg(svgText);
+      applicationStore.downloadSvg(svgElement);
       emits("download", 'download_map');
     }
   }
