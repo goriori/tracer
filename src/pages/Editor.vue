@@ -41,10 +41,6 @@ const modalEvents = {
   cancel_delete: () => stateStore.toggleModal('delete_route')
 }
 
-const objectTypeEvents = {
-  geo: (event) => geoObjectHandler(event),
-  series: (event) => seriesObjectHandler(event)
-}
 
 const eventTargetElementHandler = (event) => {
   const listenerHandlers = {
@@ -70,6 +66,10 @@ const initChart = () => {
 }
 
 const chartObjectClick = (event) => {
+  const objectTypeEvents = {
+    geo: (event) => geoObjectHandler(event),
+    series: (event) => seriesObjectHandler(event)
+  }
   if (event.componentType in objectTypeEvents) objectTypeEvents[event.componentType](event)
 }
 

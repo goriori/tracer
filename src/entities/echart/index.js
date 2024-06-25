@@ -118,8 +118,17 @@ export class EChart {
         this.render();
     }
 
+    addRegion(region) {
+        console.log(this.regions)
+        this.regions.push(region)
+        this.options.geo.regions = this.regions
+        this.render()
+
+    }
+
     setRegions(regions) {
         this.regions = regions
+        this.options.geo.regions = this.regions
         this.render()
     }
 
