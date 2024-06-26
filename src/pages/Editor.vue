@@ -82,22 +82,27 @@ const geoObjectHandler = (event) => {
   const region = new Region(event.region.name)
   const coordinatesRegion = coordinatorStore.getCoordinates(region.name)
   const coordinateOption = coordinatorStore.getCoordinateOption(region.name)
-  if (coordinatesRegion && coordinatesRegion.length > 2) {
-    chart.value.setCoordinates(coordinatesRegion)
-    chart.value.changeBrushColor(coordinateOption.color)
-    regionStore.setRegion(region)
-  } else {
-    const {offsetX, offsetY} = event.event
-    const coordinateRegion = [offsetX, offsetY]
-    const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
-    const haveStartPosition = coordinatorStore.getCoordinates(region.name)
-    const startCoordinates = [[x, y], [x + 1, y + 1]]
-    if (!haveStartPosition || haveStartPosition.length === 0) {
-      startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
-    }
-    regionStore.setRegion(region)
-    chart.value.setCoordinates(startCoordinates)
+  if (coordinatesRegion && coordinatesRegion.length > 2) loadCoordinatesRegion(region, coordinatesRegion, coordinateOption)
+  else loadCoordinatesClick(region, event)
+}
+
+const loadCoordinatesRegion = (region, coordinatesRegion, coordinateOption) => {
+  chart.value.setCoordinates(coordinatesRegion)
+  chart.value.changeBrushColor(coordinateOption.color)
+  regionStore.setRegion(region)
+}
+
+const loadCoordinatesClick = (region, event) => {
+  const {offsetX, offsetY} = event.event
+  const coordinateRegion = [offsetX, offsetY]
+  const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
+  const haveStartPosition = coordinatorStore.getCoordinates(region.name)
+  const startCoordinates = [[x, y], [x + 1, y + 1]]
+  if (!haveStartPosition || haveStartPosition.length === 0) {
+    startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
   }
+  regionStore.setRegion(region)
+  chart.value.setCoordinates(startCoordinates)
 }
 
 const seriesObjectHandler = (event) => {
@@ -125,6 +130,7 @@ const onClick = (event) => {
 }
 
 const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
+
 const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
 
 const initKeypressEvents = () => {
