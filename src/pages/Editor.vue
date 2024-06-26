@@ -35,7 +35,9 @@ const appEvents = {
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
   change_brush: () => setBrush(),
-  change_state_editor: () => console.log('change state editor')
+  change_state_editor: () => {
+    console.log('change state editor')
+  }
 }
 
 const modalEvents = {
@@ -45,12 +47,6 @@ const modalEvents = {
 
 
 const eventTargetElementHandler = (event) => {
-  const targetElement = event.target
-  targetElement.setAttribute('name', 'TEST')
-  const newRegion = new Region('TEST')
-  chart.value.addRegion(newRegion)
-  chart.value.render()
-  console.log(event)
   const listenerHandlers = {
     click: (event) => onClick(event)
   }
@@ -115,6 +111,7 @@ const deleteRoute = () => {
   stateStore.toggleModal('delete_route')
   chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
 }
+
 const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
 
 const onClick = (event) => {
@@ -158,12 +155,13 @@ onMounted(async () => {
     <h1>Редактор (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
-    <div v-if="applicationStore.getStateEditor() === 'tracer'" class="tracer" id="tracer" ref="targetTracerElement">
+    <div class="tracer" id="tracer" ref="targetTracerElement">
       <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
     </div>
-    <div v-if="applicationStore.getStateEditor() === 'svg_editor'" class="tracer" id="tracer" ref="targetSvgElement">
-      <p v-if="!applicationStore.svgMap">svg editor</p>
-    </div>
+    <!--    <div  class="svg_editor" id="svg_editor"-->
+    <!--         :ref="targetSvgElement">-->
+    <!--      <p v-if="!applicationStore.svgMap">svg editor</p>-->
+    <!--    </div>-->
     <Footer @event-update="onUpdate"/>
   </div>
 </template>
@@ -190,7 +188,7 @@ aside {
   max-width: 50px;
 }
 
-.tracer {
+.tracer, .svg_editor {
   width: 100%;
   height: 100%;
   max-width: 1000px;
