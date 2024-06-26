@@ -152,7 +152,7 @@ onMounted(async () => {
 <template>
   <div class="page">
     <Modals @event-update="onModalUpdate"/>
-    <h1>Редактор (Расчерчиватель)</h1>
+    <h1>Редактор v1 (Расчерчиватель)</h1>
     <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
     <div class="tracer" id="tracer" ref="targetTracerElement">

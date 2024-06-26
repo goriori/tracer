@@ -4,6 +4,8 @@ const Main = () => import('@/pages/Main.vue')
 const Download = () => import('@/pages/DownloadSVG.vue')
 const Editor = () => import('@/pages/Editor.vue')
 const Ui = () => import('@/pages/Ui.vue')
+const Visualizer = () => import('@/pages/Visualizer.vue')
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -26,7 +28,13 @@ const router = createRouter({
             path: '/ui',
             name: 'ui',
             component: Ui,
+        },
+        {
+            path: '/visualizer',
+            name: 'visualizer',
+            component: Visualizer
         }
+
     ],
 })
 router.beforeEach((to, from, next) => {
