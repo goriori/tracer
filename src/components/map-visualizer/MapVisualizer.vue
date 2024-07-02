@@ -1,22 +1,28 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import {EChart} from "@/components/map-visualizer/entities/echart.js";
-import {Coordinator} from "@/components/map-visualizer/entities/coordinator.js";
-import {Region} from "@/entities/region/index.js";
+import {computed, onMounted, onUpdated, ref} from "vue";
+import {EChart} from "./entities/echart.js";
+import {Coordinator} from "./entities/coordinator.js";
+import {Region} from "./entities/region.js";
 
 const props = defineProps({
   config: {
     type: Object,
     default: () => {
     }
+  },
+  targetRegion: {
+    type: String,
+    default: ''
   }
 })
+
 
 const coordinator = ref(null)
 const mapVisitor = ref(null)
 const targetMapElement = ref(null)
-
-
+const targetRegion = computed(() => props.targetRegion)
+const emits = defineEmits(['update:targetRegion'])
+console.log(props.config)
 const initMapVisualizer = () => {
   const configMap = props.config?.map
   const configRegions = props.config?.regions
@@ -53,17 +59,19 @@ const geoObjectHandler = (event) => {
   const region = new Region(event.region.name)
   const coordinatesRegion = coordinator.value.getCoordinates(region.name)
   const coordinateOption = coordinator.value.getCoordinateOption(region.name)
-  if (coordinatesRegion && coordinatesRegion.length > 2) loadCoordinatesRegion(coordinatesRegion, coordinateOption)
-  else loadCoordinatesClick(event)
+  if (coordinatesRegion && coordinatesRegion.length > 2) loadCoordinatesRegion(region, coordinatesRegion, coordinateOption)
+  else loadCoordinatesClick(region, event)
+  emits('update:targetRegion', region.name)
+
+
 }
 
-const loadCoordinatesRegion = (coordinatesRegion, coordinateOption) => {
+const loadCoordinatesRegion = (region, coordinatesRegion, coordinateOption) => {
   mapVisitor.value.setCoordinates(coordinatesRegion)
   mapVisitor.value.changeBrushColor(coordinateOption.color)
 }
 
-const loadCoordinatesClick = (event) => {
-  const region = new Region(event.region.name)
+const loadCoordinatesClick = (region, event) => {
   const {offsetX, offsetY} = event.event
   const coordinateRegion = [offsetX, offsetY]
   const [x, y] = mapVisitor.value.computedCoordinatesFromPixel(coordinateRegion)
@@ -74,7 +82,11 @@ const loadCoordinatesClick = (event) => {
   }
   mapVisitor.value.setCoordinates(startCoordinates)
 }
-
+onUpdated(() => {
+  const coordinatesRegion = coordinator.value.getCoordinates(targetRegion.value)
+  const coordinateOption = coordinator.value.getCoordinateOption(targetRegion.value)
+  loadCoordinatesRegion(targetRegion.value, coordinatesRegion, coordinateOption)
+})
 onMounted(() => {
   if (targetMapElement.value) {
     initCoordinator()

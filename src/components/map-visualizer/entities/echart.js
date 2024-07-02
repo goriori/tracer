@@ -5,7 +5,7 @@ export class EChart {
         this.element = element;
         this.chart = null;
         this.mapSvgText = null
-        this.coordinates = [[110, 450], [150, 480]]
+        this.coordinates = [[0, 0], [0, 0]]
         this.regions = []
         this.lineStyle = {
             color: '#c46e54',
