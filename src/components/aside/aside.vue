@@ -26,10 +26,10 @@ const onEmitHandler = (type) => {
 <template>
   <aside>
     <BrushColorAction @change-color="onEmitHandler" class="action"/>
-    <EditButton class="action"/>
+<!--    <EditButton class="action"/>-->
     <BrushAction @change-brush="onEmitHandler"/>
     <DrawAction @start-drawing="onEmitHandler" @stop-drawing="onEmitHandler" class="action"/>
-    <ClearAction @clear="onEmitHandler" class="action"/>
+<!--    <ClearAction @clear="onEmitHandler" class="action"/>-->
   </aside>
 </template>
 

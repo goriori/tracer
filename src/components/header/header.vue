@@ -31,10 +31,10 @@ const onEmitHandler = (type) => {
     <div class="left"></div>
     <div class="center">
       <h3>Выбранный объект: {{ regionStore.targetRegion?.name || 'Не выбран' }}</h3>
-      <div class="state">
-        <h4>Состояние редактора: {{ applicationStore.getStateEditor() }} </h4>
-        <StateEditorAction @change="onEmitHandler" class="action"/>
-      </div>
+<!--      <div class="state">-->
+<!--        <h4>Состояние редактора: {{ applicationStore.getStateEditor() }} </h4>-->
+<!--        <StateEditorAction @change="onEmitHandler" class="action"/>-->
+<!--      </div>-->
     </div>
     <div class="right">
       <DownloadSbgAction @download="onEmitHandler"/>
