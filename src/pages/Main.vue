@@ -1,4 +1,5 @@
 <script setup>
+import * as echarts from 'echarts'
 import {onMounted, ref} from 'vue'
 import {useRouter} from "vue-router";
 import Button from "@/components/ui/button/button.vue";
