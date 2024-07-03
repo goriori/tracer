@@ -106,7 +106,6 @@ const loadCoordinatesClick = (region, event) => {
 }
 
 const seriesObjectHandler = (event) => {
-  console.log(event)
   if (event.componentSubType !== 'lines') return false
   stateStore.toggleModal('delete_route')
 }
