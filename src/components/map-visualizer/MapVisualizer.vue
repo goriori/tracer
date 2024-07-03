@@ -40,7 +40,7 @@ const initCoordinator = () => {
   if (!configCoordinates) throw new Error('Not exist option coordinate in config')
   coordinator.value = new Coordinator()
   configCoordinates.forEach(coordinateObject => {
-    coordinateObject.coordinates.forEach(coordinate => {
+    coordinateObject.coordinates.reverse().forEach(coordinate => {
       coordinator.value.addCoordinate(coordinateObject.name, coordinate)
     })
   })
