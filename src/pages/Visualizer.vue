@@ -19,7 +19,7 @@ onBeforeMount(async () => {
 
 <template>
   <div class="page">
-    <h1>Visualizer</h1>
+    <h1>Visualizer For Rosneft</h1>
     <button @click="onChangeRegion">change target Region</button>
     <MapVisualizer
         v-if="config"
