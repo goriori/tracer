@@ -10,7 +10,8 @@ const onChangeRegion = () => {
 }
 
 onBeforeMount(async () => {
-  const responseConfig = await fetch('https://rosneft-info.itlabs.top/download/file?file=files%2Fmap%2Fmap-7-667d4128ddc27823036475.json')
+  const urlFile = encodeURIComponent('files/map/map-3-6683fc67d8e71768463439.json')
+  const responseConfig = await fetch(`https://rosneft-info.itlabs.top/download/file?file=${urlFile}`)
   config.value = await responseConfig.json()
   console.log(config.value)
 })

@@ -22,10 +22,10 @@ const mapVisitor = ref(null)
 const targetMapElement = ref(null)
 const targetRegion = computed(() => props.targetRegion)
 const emits = defineEmits(['update:targetRegion'])
-console.log(props.config)
+
 const initMapVisualizer = () => {
   const configMap = props.config?.map
-  const configRegions = props.config?.regions
+  const configRegions = props.config?.regions.map(region => new Region(region.name))
   if (!configMap) throw new Error('Not exist option map in config')
   mapVisitor.value = new EChart(targetMapElement.value)
   mapVisitor.value.init()

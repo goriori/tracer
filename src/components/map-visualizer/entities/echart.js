@@ -11,7 +11,7 @@ export class EChart {
             color: '#c46e54',
             width: 5,
             opacity: 1,
-            type: 'dotted'
+            type: 'line'
         }
         this.options = {
             title: {
@@ -19,7 +19,6 @@ export class EChart {
                 left: 'center',
                 bottom: 10
             },
-            tooltip: {},
             geo: {
                 map: null,
                 roam: true,
@@ -52,7 +51,7 @@ export class EChart {
                     geoIndex: 0,
                     emphasis: {
                         label: {
-                            show: true
+                            show: false
                         }
                     },
                     polyline: true,
