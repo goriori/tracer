@@ -22,12 +22,12 @@ const onDownload = () => {
       const svgText = reader.result;
       const svgElement = convertToDomElement(svgText, 'image/svg+xml')
       for (const node of svgElement.children) {
-        const haveAttr = node.hasAttribute('id')
-        const attrValue = node.getAttribute('id')
-        if (haveAttr) {
-          node.removeAttribute('id')
-          node.setAttribute('name', attrValue)
-          regionStore.addRegion(new Region(attrValue))
+        const isRectElement = node.tagName === 'rect'
+        console.log(node)
+        if (isRectElement) {
+          const nameValue = `OBJECT_${Math.floor(Math.random() * 100000)}`
+          node.setAttribute('name', nameValue)
+          regionStore.addRegion(new Region(nameValue))
         }
       }
       applicationStore.downloadSvg(svgElement);
