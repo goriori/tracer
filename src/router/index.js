@@ -2,7 +2,8 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const Main = () => import('@/pages/Main.vue')
 const Download = () => import('@/pages/DownloadSVG.vue')
-const Editor = () => import('@/pages/Editor.vue')
+const EditorMap = () => import('@/pages/EditorMap.vue')
+const EditorSVG = () => import('@/pages/EditorSVG.vue')
 const Ui = () => import('@/pages/Ui.vue')
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,9 +19,14 @@ const router = createRouter({
             component: Download,
         },
         {
-            path: '/editor',
+            path: '/editor/map',
             name: 'editor',
-            component: Editor,
+            component: EditorMap,
+        },
+        {
+            path: '/editor/svg',
+            name: 'editor',
+            component: EditorSVG,
         },
         {
             path: '/ui',

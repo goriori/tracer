@@ -32,7 +32,6 @@ export class Coordinator {
     }
 
     getCoordinateAll() {
-        console.log(this.coordinates)
         return this.coordinates
     }
 
