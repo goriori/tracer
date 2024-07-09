@@ -9,6 +9,7 @@ defineProps({
     default: ''
   }
 })
+
 const emits = defineEmits(['update'])
 const onClick = (confirmResponse) => {
   return confirmResponse ? emits('update', {

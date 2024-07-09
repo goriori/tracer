@@ -1,6 +1,5 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
-import {Brush} from "@/entities/brush/index.js";
 import {MapSVG} from "@/entities/map/index.js";
 
 export const useApplicationStore = defineStore('application', () => {

@@ -6,6 +6,9 @@ export const useStateStore = defineStore('stateStore', () => {
     const modalSettings = ref({
         delete_route: {
             show: false
+        },
+        create_region: {
+            show: false
         }
     })
     const getModals = () => Object.keys(modalSettings.value)

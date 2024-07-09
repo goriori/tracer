@@ -11,4 +11,10 @@ export class MapSVG {
         return element.documentElement
     }
 
+    update(map) {
+        console.log('map svg update')
+        this.mapSvgText = new XMLSerializer().serializeToString(map)
+        this.mapSvgDOM = this.convertMapToDomElement()
+    }
+
 }

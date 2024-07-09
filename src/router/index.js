@@ -20,12 +20,12 @@ const router = createRouter({
         },
         {
             path: '/editor/map',
-            name: 'editor',
+            name: 'editorMap',
             component: EditorMap,
         },
         {
             path: '/editor/svg',
-            name: 'editor',
+            name: 'editorSvg',
             component: EditorSVG,
         },
         {

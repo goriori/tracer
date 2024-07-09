@@ -1,56 +1,47 @@
 <script setup>
 import {onMounted, ref} from 'vue'
-import {useBrashStore} from "@/store/brashStore.js";
-import {useTracerStore} from "@/store/tracerStore.js";
-import {useCoordinatorStore} from "@/store/coordinatorStore.js";
-import {useRegionStore} from "@/store/regionStore.js";
 import {useApplicationStore} from "@/store/applicationStore.js";
 import {useStateStore} from "@/store/stateStore.js";
-import {EChart} from "@/entities/echart/index.js";
-import {Region} from "@/entities/region/index.js";
+import PinchScrollZoom from '@coddicat/vue-pinch-scroll-zoom'
 import Header from "@/components/header/header.vue";
-import Footer from "@/components/footer/footer.vue";
 import Aside from "@/components/aside/aside.vue";
 import Modals from "@/components/modals/modals.vue";
+import {useRegionStore} from "@/store/regionStore.js";
 
 const stateStore = useStateStore()
-const applicationStore = useApplicationStore()
-const brushStore = useBrashStore()
 const regionStore = useRegionStore()
-const tracerStore = useTracerStore()
-const coordinatorStore = useCoordinatorStore()
-const targetTracerElement = ref(null)
-const targetSvgElement = ref(null)
-const chart = ref(null)
-
+const applicationStore = useApplicationStore()
+const targetContainer = ref(null)
+const targetSvg = ref(null)
+const targetElement = ref(null)
+const zoomer = ref(null)
 const appEvents = {
-  download_map: () => initChart(),
-  download_json: () => initChart(),
-  start_drawing: () => targetTracerElement.value.addEventListener('click', eventTargetElementHandler),
-  stop_drawing: () => targetTracerElement.value.removeEventListener('click', eventTargetElementHandler),
-  change_brush_color: () => {
-    setBrushColor()
-    coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
+  download_svg: () => {
+    console.log('download svg')
+    setTimeout(initEditorSvg, 1000)
   },
-  clear_all: () => clearChart(),
-  save_all: () => console.log('save all'),
-  change_brush: () => setBrush(),
-  change_state_editor: () => {
-    console.log('change state editor')
-  }
 }
 
 const modalEvents = {
-  confirm_delete: () => deleteRoute(),
-  cancel_delete: () => stateStore.toggleModal('delete_route')
+  create_region: (regionName) => {
+    targetElement.value.setAttribute('name', regionStore.getTargetRegion().name)
+    targetElement.value.style.fill = 'red'
+    applicationStore.getMapSvg().update(targetSvg.value)
+    console.log('create region', targetElement.value)
+  },
+  cancel_create_region: () => console.log('cancel create region')
 }
 
-
-const eventTargetElementHandler = (event) => {
-  const listenerHandlers = {
-    click: (event) => onClick(event)
-  }
-  if (event.type in listenerHandlers) return listenerHandlers[event.type](event)
+const initEditorSvg = () => Promise.resolve().then(initTargetSvg).then(initEventsTargetSvg)
+const initTargetSvg = () => targetSvg.value = targetContainer.value.children[0].firstChild
+const initEventsTargetSvg = () => {
+  targetSvg.value.addEventListener('click', (event) => {
+    const elementName = event.target.nodeName
+    if (elementName === 'rect') {
+      targetElement.value = event.target
+      stateStore.toggleModal('create_region')
+    }
+  })
 }
 
 const onUpdate = (type) => {
@@ -61,114 +52,21 @@ const onModalUpdate = (type) => {
   if (type in modalEvents) modalEvents[type]()
 }
 
-const initChart = () => {
-  const map = applicationStore.getMapSvg()
-  chart.value.init()
-  chart.value.registerMap(map.name, map.mapSvgText)
-  chart.value.setRegions(regionStore.getRegions())
-  chart.value.on('click', chartObjectClick)
-}
-
-const chartObjectClick = (event) => {
-  const objectTypeEvents = {
-    geo: (event) => geoObjectHandler(event),
-    series: (event) => seriesObjectHandler(event)
-  }
-  if (event.componentType in objectTypeEvents) objectTypeEvents[event.componentType](event)
-}
-
-const geoObjectHandler = (event) => {
-  if (!event.region) return false
-  const region = new Region(event.region.name)
-  const coordinatesRegion = coordinatorStore.getCoordinates(region.name)
-  const coordinateOption = coordinatorStore.getCoordinateOption(region.name)
-  if (coordinatesRegion && coordinatesRegion.length > 2) loadCoordinatesRegion(region, coordinatesRegion, coordinateOption)
-  else loadCoordinatesClick(region, event)
-}
-
-const loadCoordinatesRegion = (region, coordinatesRegion, coordinateOption) => {
-  chart.value.setCoordinates(coordinatesRegion)
-  chart.value.changeBrushColor(coordinateOption.color)
-  regionStore.setRegion(region)
-}
-
-const loadCoordinatesClick = (region, event) => {
-  const {offsetX, offsetY} = event.event
-  const coordinateRegion = [offsetX, offsetY]
-  const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
-  const haveStartPosition = coordinatorStore.getCoordinates(region.name)
-  const startCoordinates = [[x, y], [x + 1, y + 1]]
-  if (!haveStartPosition || haveStartPosition.length === 0) {
-    startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
-  }
-  regionStore.setRegion(region)
-  chart.value.setCoordinates(startCoordinates)
-}
-
-const seriesObjectHandler = (event) => {
-  if (event.componentSubType !== 'lines') return false
-  stateStore.toggleModal('delete_route')
-}
-
-const deleteRoute = () => {
-  const targetRegion = regionStore.getTargetRegion()
-  coordinatorStore.deleteCoordinatesObject(targetRegion.name)
-  stateStore.toggleModal('delete_route')
-  chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
-}
-
-const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
-
-const onClick = (event) => {
-  const targetRegion = regionStore.getTargetRegion()
-  if (!targetRegion.name) return false
-  if (!tracerStore.getStateTracer()) tracerStore.start()
-  const convertedCoordinates = chart.value.computedCoordinatesFromPixel([event.offsetX, event.offsetY])
-  coordinatorStore.addCoordinate(targetRegion.name, convertedCoordinates)
-  tracerStore.draw('point', targetRegion, convertedCoordinates)
-  chart.value.addCoordinates(convertedCoordinates)
-}
-
-const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
-
-const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
-
-const initKeypressEvents = () => {
-  const keys = {
-    '\x1A': () => {
-      if (tracerStore.getHistory().length === 0) return false
-      const lastHistory = tracerStore.backStep()
-      chart.value.removeLastCoordinates()
-    }
-  }
-  window.addEventListener('keypress', (event) => {
-    if (event.key in keys) keys[event.key]()
-  })
-}
-
+onUpdate(()=> console.log('update editor svg'))
 onMounted(async () => {
-  if (targetTracerElement.value) chart.value = new EChart(targetTracerElement.value)
-  tracerStore.init()
-  coordinatorStore.init()
-  brushStore.init()
-  initKeypressEvents()
+
 })
 
 </script>
 <template>
   <div class="page">
     <Modals @event-update="onModalUpdate"/>
-    <h1>Редактор (Расчерчиватель)</h1>
+    <h1>Редактор SVG</h1>
     <Header @event-update="onUpdate"/>
-    <Aside @event-update="onUpdate"/>
-    <div class="tracer" id="tracer" ref="targetTracerElement">
+    <div class="editor_svg" id="editor_svg" ref="targetContainer">
       <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
+      <div v-else v-html="applicationStore.svgMap.mapSvgText"></div>
     </div>
-    <!--    <div  class="svg_editor" id="svg_editor"-->
-    <!--         :ref="targetSvgElement">-->
-    <!--      <p v-if="!applicationStore.svgMap">svg editor</p>-->
-    <!--    </div>-->
-    <Footer @event-update="onUpdate"/>
   </div>
 </template>
 
@@ -194,7 +92,8 @@ aside {
   max-width: 50px;
 }
 
-.tracer, .svg_editor {
+.editor_svg {
+  position: relative;
   width: 100%;
   height: 100%;
   max-width: 1000px;
@@ -204,5 +103,6 @@ aside {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 </style>
