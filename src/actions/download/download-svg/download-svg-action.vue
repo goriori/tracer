@@ -23,6 +23,7 @@ const onDownload = () => {
       const svgElement = convertToDomElement(svgText, 'image/svg+xml')
       for (const node of svgElement.children) {
         const isRectElement = node.tagName === 'rect'
+        console.log(node)
         if (isRectElement) {
           const nameValue = `OBJECT_${Math.floor(Math.random() * 100000)}`
           node.setAttribute('name', nameValue)

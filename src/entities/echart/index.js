@@ -108,6 +108,7 @@ export class EChart {
 
     render() {
         console.log('render')
+        console.log(this.options)
         this.chart.setOption(this.options);
     }
 
@@ -118,6 +119,7 @@ export class EChart {
     }
 
     addRegion(region) {
+        console.log(this.regions)
         this.regions.push(region)
         this.options.geo.regions = this.regions
         this.render()

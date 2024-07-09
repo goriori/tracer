@@ -1,18 +1,16 @@
 <script setup>
+import {onMounted} from 'vue'
 import {useRouter} from "vue-router";
 
 const router = useRouter()
 
-
+onMounted(async () => {
+  await router.push('/editor')
+})
 </script>
 <template>
   <div class="page">
-    <section class="navigate">
-      <nav>
-        <a href="/editor/map">Editor Map</a>
-        <a href="/editor/svg">Editor SVG</a>
-      </nav>
-    </section>
+    <div class="tracer" id="tracer" ref="tracerRef" @click="onClick"></div>
   </div>
 </template>
 
