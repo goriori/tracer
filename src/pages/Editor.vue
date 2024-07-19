@@ -168,7 +168,7 @@ onMounted(async () => {
     <!--         :ref="targetSvgElement">-->
     <!--      <p v-if="!applicationStore.svgMap">svg editor</p>-->
     <!--    </div>-->
-    <Footer @event-update="onUpdate"/>
+    <Footer @event-update="onUpdate" class="footer"/>
   </div>
 </template>
 
@@ -204,5 +204,8 @@ aside {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.footer {
+  margin: 100px 0;
 }
 </style>

@@ -13,7 +13,9 @@ const onEmitHandler = (type) => {
 
 <template>
   <footer class="footer">
-    <section class="left"></section>
+    <section class="left">
+      VdoxnovenieMayaMuza
+    </section>
     <section class="center"></section>
     <section class="right">
       <DownloadJsonAction @download="onEmitHandler"/>
