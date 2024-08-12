@@ -158,37 +158,21 @@ onMounted(async () => {
 <template>
   <div class="page">
     <Modals @event-update="onModalUpdate"/>
-    <h1>Редактор (Расчерчиватель)</h1>
-    <Header @event-update="onUpdate"/>
     <Aside @event-update="onUpdate"/>
-    <div class="tracer" id="tracer" ref="targetTracerElement">
-      <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
+    <div class="editor">
+      <div class="target-object">
+        <h3>Выбранный объект: {{ regionStore.targetRegion?.name || 'Не выбран' }}</h3>
+      </div>
+      <div class="tracer" id="tracer" ref="targetTracerElement">
+        <p v-if="!applicationStore.svgMap">Упс.. загрузите изображения</p>
+      </div>
     </div>
-    <!--    <div  class="svg_editor" id="svg_editor"-->
-    <!--         :ref="targetSvgElement">-->
-    <!--      <p v-if="!applicationStore.svgMap">svg editor</p>-->
-    <!--    </div>-->
-    <Footer @event-update="onUpdate" class="footer"/>
   </div>
 </template>
 
 <style scoped lang="scss">
 
-
-aside {
-  position: fixed;
-  top: 50%;
-  border-radius: 10px;
-  padding: 10px;
-  border: 1px solid #5696ff;
-  max-width: 70px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transform: translate(0, -50%);
-  z-index: 100;
-  transition: 0.3s all ease-in-out;
-}
+@import "@/assets/scss/animation";
 
 .action {
   max-width: 50px;
@@ -201,11 +185,30 @@ aside {
   max-height: 700px;
   margin: 0 auto;
   border: 2px solid #5696ff;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.footer {
-  margin: 100px 0;
+
+.target-object {
+  max-width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #5696ff;
+  border-radius: 10px;
+  margin: 10px auto;
+  padding: 10px;
+
+}
+
+.tracer, .target-object {
+  animation: display-module 0.5s linear;
+}
+
+.editor {
+  width: 100%;
+  height: 100%;
 }
 </style>

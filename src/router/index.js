@@ -9,23 +9,38 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            name: 'home',
+            name: 'Home',
             component: Main,
+            meta: {
+                name: 'Главная страница',
+                isVisibility: false
+            }
         },
         {
             path: '/download',
             name: 'download',
             component: Download,
+            meta: {
+                name: 'Загрузка Карт',
+                isVisibility: true
+            }
         },
         {
             path: '/editor',
-            name: 'editor',
+            name: 'Editor',
             component: Editor,
+            meta: {
+                name: 'Редактор',
+                isVisibility: true
+            }
         },
         {
             path: '/ui',
-            name: 'ui',
+            name: 'Ui',
             component: Ui,
+            meta: {
+                isVisibility: false
+            }
         }
     ],
 })

@@ -1,24 +1,39 @@
 <script setup>
-import {onMounted} from 'vue'
+import {onMounted, ref} from 'vue'
 import {useRouter} from "vue-router";
+import Button from "@/components/ui/button/button.vue";
 
 const router = useRouter()
-
+const routes = ref(router.getRoutes().filter(route => route.meta?.isVisibility))
 onMounted(async () => {
-  await router.push('/editor')
 })
 </script>
 <template>
   <div class="page">
-    <div class="tracer" id="tracer" ref="tracerRef" @click="onClick"></div>
+    <div class="page-menu">
+      <Button
+          v-for="route in routes "
+          :key="route.name"
+          :title="route.name"
+          @click="router.push(route.path)"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-.tracer {
-  width: 100%;
-  height: 100%;
+  &-menu {
+    width: 100%;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 }
 </style>

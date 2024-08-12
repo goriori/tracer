@@ -1,10 +1,14 @@
 <script setup>
 
-import PaintButton from "@/components/ui/button/paint/paint-button.vue";
 import {ref} from "vue";
 import {useTracerStore} from "@/store/tracerStore.js";
+import PaintButton from "@/components/ui/button/paint/paint-button.vue";
+import {useApplicationStore} from "@/store/applicationStore.js";
+import {useRegionStore} from "@/store/regionStore.js";
 
 const tracerStore = useTracerStore()
+const applicationStore = useApplicationStore()
+const regionStore = useRegionStore()
 const emits = defineEmits(["start-drawing", 'stop-drawing'])
 
 const isDrawing = ref(false)
@@ -20,8 +24,20 @@ const onStopDrawing = () => {
   emits('stop-drawing', 'stop_drawing')
 }
 const onClick = () => {
-  if (isDrawing.value) onStopDrawing()
-  else onStartDrawing()
+  const haveMap = applicationStore.getMapSvg()
+  if (haveMap) {
+    const haveTargetObject = Object.keys(regionStore.getTargetRegion()).length > 0
+    if (isDrawing.value) {
+      onStopDrawing()
+    } else if (!haveTargetObject) {
+      alert('Чтобы начать рисовать, выберите объект на карте')
+    } else {
+      onStartDrawing()
+    }
+  } else {
+    alert('Чтобы начать рисовать, необходимо загрузить карту')
+  }
+
 }
 </script>
 

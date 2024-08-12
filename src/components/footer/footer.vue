@@ -18,7 +18,6 @@ const onEmitHandler = (type) => {
     </section>
     <section class="center"></section>
     <section class="right">
-      <DownloadJsonAction @download="onEmitHandler"/>
     </section>
   </footer>
 </template>
