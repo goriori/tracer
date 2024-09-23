@@ -2,7 +2,7 @@
 
 import BrushAction from "@/actions/brush/brush-action.vue";
 import ClearAction from "@/actions/clear/clear-action.vue";
-import ColorButton from "@/components/ui/button/color/color-button.vue";
+// import ColorButton from "@/components/ui/button/color/color-button.vue";
 import DrawAction from "@/actions/draw/draw-action.vue";
 import EditButton from "@/components/ui/button/edit/edit-button.vue";
 import BrushColorAction from "@/actions/brush-color/brush-color-action.vue";
