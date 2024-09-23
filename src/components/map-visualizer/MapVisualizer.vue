@@ -3,6 +3,8 @@ import {computed, onMounted, onUpdated, ref} from "vue";
 import {EChart} from "./entities/echart.js";
 import {Coordinator} from "./entities/coordinator.js";
 import {Region} from "./entities/region.js";
+import {Scatter} from "./entities/scatter.js";
+import {Lines} from './entities/lines.js'
 
 const props = defineProps({
   config: {
@@ -20,6 +22,8 @@ const props = defineProps({
 const coordinator = ref(null)
 const mapVisitor = ref(null)
 const targetMapElement = ref(null)
+const lines = ref(new Lines([[0, 0], [0, 0]], 'Way'))
+const scatter = ref(new Scatter('', 'Terminal'))
 const targetRegion = computed(() => props.targetRegion)
 const emits = defineEmits(['update:targetRegion'])
 
@@ -31,8 +35,17 @@ const initMapVisualizer = () => {
   mapVisitor.value.init()
   mapVisitor.value.registerMap('map', configMap.mapSvgTxt)
   mapVisitor.value.setRegions(configRegions)
+  mapVisitor.value.addSeries(lines.value)
+  mapVisitor.value.addSeries(scatter.value)
   mapVisitor.value.render()
   mapVisitor.value.on('click', chartObjectClick)
+}
+
+const initScatter = () => {
+  const configScatterPoints = props.config?.scatters
+  if (configScatterPoints) {
+    configScatterPoints.forEach(point => scatter.value.addPoint(point))
+  }
 }
 
 const initCoordinator = () => {
@@ -68,7 +81,6 @@ const geoObjectHandler = (event) => {
 
 const loadCoordinatesRegion = (region, coordinatesRegion, coordinateOption) => {
   mapVisitor.value.setCoordinates(coordinatesRegion)
-  mapVisitor.value.changeBrushColor(coordinateOption.color)
 }
 
 const loadCoordinatesClick = (region, event) => {
@@ -90,6 +102,7 @@ onUpdated(() => {
 onMounted(() => {
   if (targetMapElement.value) {
     initCoordinator()
+    initScatter()
     initMapVisualizer()
   }
 })

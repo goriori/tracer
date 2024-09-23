@@ -1,5 +1,4 @@
 import * as echarts from 'echarts'
-import {Scatter} from "@/entities/echart/scatter/index.js";
 
 export class EChart {
     constructor(element) {
