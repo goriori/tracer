@@ -6,11 +6,13 @@ import {useApplicationStore} from "@/store/applicationStore.js";
 import {useRegionStore} from "@/store/regionStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
 import {useTracerStore} from "@/store/tracerStore.js";
+import {useScatterStore} from "@/store/scatterStore.js";
 
 const emits = defineEmits(['save'])
 const applicationStore = useApplicationStore()
 const tracerStore = useTracerStore()
 const regionStore = useRegionStore()
+const scattersStore = useScatterStore()
 const coordinatorStore = useCoordinatorStore()
 const save = () => {
   const saveData = {
@@ -22,7 +24,9 @@ const save = () => {
       history: tracerStore.getHistory()
     },
     regions: regionStore.getRegions(),
-    coordinates: coordinatorStore.getCoordinateAll()
+    scatters: scattersStore.getPoints(),
+    coordinates: coordinatorStore.getCoordinateAll(),
+
   }
   const saverJSON = new SaverJsonTracker()
   saverJSON.save('map', saveData)

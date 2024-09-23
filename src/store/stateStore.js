@@ -6,6 +6,12 @@ export const useStateStore = defineStore('stateStore', () => {
     const modalSettings = ref({
         delete_route: {
             show: false
+        },
+        info_editor: {
+            show: !JSON.parse(localStorage.getItem('checkAppointment'))
+        },
+        delete_scatter: {
+            show: false
         }
     })
     const getModals = () => Object.keys(modalSettings.value)

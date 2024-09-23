@@ -23,7 +23,7 @@ const onChangeElement = (element) => {
 <template>
   <div class="dropdown">
     <section class="dropdown-element">
-      <component :is="targetElement" @click="isOpen=!isOpen"/>
+      <component :is="targetElement" @click="isOpen=!isOpen" class="icon"/>
       <Transition name="fade">
         <section class="dropdown-content" v-if="isOpen">
           <component v-for="element in list" :key="element.id" :is="element" @click="onChangeElement(element)"/>
@@ -56,7 +56,11 @@ const onChangeElement = (element) => {
     justify-items: center;
     align-items: center;
     gap: 10px;
-
   }
+}
+
+.icon {
+  max-width: 50px;
+  max-height: 50px;
 }
 </style>

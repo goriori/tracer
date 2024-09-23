@@ -5,11 +5,13 @@ import {useRegionStore} from "@/store/regionStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
 import DownloadFileButton from "@/components/ui/button/download-file/download-file-button.vue";
 import {convertToDomElement} from "@/utils/helpers/convertDomElement.js";
+import {useScatterStore} from "@/store/scatterStore.js";
 
 
 const applicationStore = useApplicationStore()
 const regionStore = useRegionStore()
 const coordinatorStore = useCoordinatorStore()
+const scatterStore = useScatterStore()
 const emits = defineEmits(['download'])
 const REQUIRED_ENTITIES = ['regions', 'map', 'coordinates']
 const onDownload = () => {
@@ -40,6 +42,10 @@ const loadEntities = (config) => new Promise((resolve, reject) => {
       return config
     })
     .then((config) => {
+      loadScatters(config.scatters)
+      return config
+    })
+    .then((config) => {
       loadCoordinator(config.coordinates)
       return config
     })
@@ -49,6 +55,7 @@ const loadEntities = (config) => new Promise((resolve, reject) => {
 
 const loadMap = (mapTxt) => applicationStore.downloadSvg(convertToDomElement(mapTxt, 'image/svg+xml'))
 const loadRegions = (regions) => regions.forEach(region => regionStore.addRegion(region))
+const loadScatters = (scatters) => scatters.forEach(scatter => scatterStore.addPoint(scatter))
 const loadCoordinator = (coordinates) => {
   coordinates.forEach(object => {
     object.coordinates.forEach(coordinate => {

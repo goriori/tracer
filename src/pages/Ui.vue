@@ -39,8 +39,10 @@ import BrushDropDown from "@/components/ui/drop-down/brush/brush-drop-down.vue";
     <section class="page-section">
       <h3>Drop down</h3>
       <div class="page-section-content">
-        <DropDown :list="[ColorButton, PaintButton,ClearButton,EditButton]"/>
-        <BrushDropDown/>
+        <DropDown class="dropdown" :list="[ColorButton, PaintButton,ClearButton,EditButton]"/>
+        <BrushDropDown class="dropdown"/>
+        <DropDown class="dropdown" :list="[ColorButton, PaintButton,ClearButton,EditButton]"/>
+        <BrushDropDown class="dropdown"/>
       </div>
     </section>
   </div>
@@ -78,5 +80,6 @@ import BrushDropDown from "@/components/ui/drop-down/brush/brush-drop-down.vue";
     }
   }
 }
+
 
 </style>

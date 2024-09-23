@@ -1,5 +1,6 @@
 <script setup>
 
+import {ref} from "vue";
 import BrushAction from "@/actions/brush/brush-action.vue";
 import ClearAction from "@/actions/clear/clear-action.vue";
 import ColorButton from "@/components/ui/button/color/color-button.vue";
@@ -11,8 +12,8 @@ import SaveAllAction from "@/actions/save/save-all/save-all-action.vue";
 import DownloadJsonAction from "@/actions/download/download-json/download-json-action.vue";
 import Button from "@/components/ui/button/button.vue";
 import Menu from "@/components/ui/icons/menu.vue";
-import {ref} from "vue";
 import Close from "@/components/ui/icons/close.vue";
+import AddScatterAction from "@/actions/add-scatter/add-scatter-action.vue";
 
 const emits = defineEmits(['event-update'])
 
@@ -25,7 +26,9 @@ const actionsEmits = {
   stop_drawing: (type) => eventUpdate(type),
   clear_all: (type) => eventUpdate(type),
   download_json: (type) => eventUpdate(type),
-  download_map: (type) => eventUpdate(type)
+  download_map: (type) => eventUpdate(type),
+  start_create_point: (type) => eventUpdate(type),
+  stop_create_point: (type) => eventUpdate(type)
 }
 
 const eventUpdate = (type) => emits('event-update', type)
@@ -45,7 +48,8 @@ const onEmitHandler = (type) => {
     <DownloadSbgAction v-if="menuActive" @download="onEmitHandler" class="action"/>
     <DownloadJsonAction v-if="menuActive" @download="onEmitHandler" class="action"/>
     <SaveAllAction v-if="menuActive" @save="onEmitHandler" class="action"/>
-    <!--    <ClearAction @clear="onEmitHandler" class="action"/>-->
+    <ClearAction  v-if="menuActive" @clear="onEmitHandler" class="action"/>
+    <AddScatterAction v-if="menuActive" @point="onEmitHandler" class="action"/>
   </aside>
 </template>
 
@@ -71,8 +75,8 @@ aside {
   animation: display-action 0.3s linear;
 }
 
-.close,.menu {
-  animation:  toggle-effect 0.2s linear;
+.close, .menu {
+  animation: toggle-effect 0.2s linear;
 }
 
 

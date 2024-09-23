@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onBeforeUnmount, onMounted, ref} from 'vue'
 import {useBrashStore} from "@/store/brashStore.js";
 import {useTracerStore} from "@/store/tracerStore.js";
 import {useCoordinatorStore} from "@/store/coordinatorStore.js";
@@ -12,11 +12,15 @@ import Header from "@/components/header/header.vue";
 import Footer from "@/components/footer/footer.vue";
 import Aside from "@/components/aside/aside.vue";
 import Modals from "@/components/modals/modals.vue";
+import {Scatter} from "@/entities/echart/scatter/index.js";
+import {useScatterStore} from "@/store/scatterStore.js";
+import {Lines} from "@/entities/echart/lines/index.js";
 
 const stateStore = useStateStore()
 const applicationStore = useApplicationStore()
 const brushStore = useBrashStore()
 const regionStore = useRegionStore()
+const scatterStore = useScatterStore()
 const tracerStore = useTracerStore()
 const coordinatorStore = useCoordinatorStore()
 const targetTracerElement = ref(null)
@@ -28,21 +32,32 @@ const appEvents = {
   download_json: () => initChart(),
   start_drawing: () => targetTracerElement.value.addEventListener('click', eventTargetElementHandler),
   stop_drawing: () => targetTracerElement.value.removeEventListener('click', eventTargetElementHandler),
-  change_brush_color: () => {
-    setBrushColor()
-    coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
-  },
+  // change_brush_color: () => {
+  //   setBrushColor()
+  //   coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
+  // },
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  change_brush: () => setBrush(),
+  // change_brush: () => setBrush(),
   change_state_editor: () => {
     console.log('change state editor')
-  }
+  },
+  start_create_point: () => {
+    targetTracerElement.value.addEventListener('click', eventTargetElementHandler)
+    console.log('add point')
+  },
+  stop_create_point: () => {
+    targetTracerElement.value.removeEventListener('click', eventTargetElementHandler)
+    console.log('stop add point')
+  },
 }
 
 const modalEvents = {
   confirm_delete: () => deleteRoute(),
-  cancel_delete: () => stateStore.toggleModal('delete_route')
+  cancel_delete: () => stateStore.toggleModal('delete_route'),
+  confirm_delete_scatter: () => deleteScatter(),
+  cancel_delete_scatter: () => stateStore.toggleModal('delete_scatter'),
+  close_info: () => stateStore.toggleModal('info_editor')
 }
 
 
@@ -66,7 +81,9 @@ const initChart = () => {
   chart.value.init()
   chart.value.registerMap(map.name, map.mapSvgText)
   chart.value.setRegions(regionStore.getRegions())
+  chart.value.addSeries(new Lines([[0, 0], [0, 0]], 'Way'))
   chart.value.on('click', chartObjectClick)
+  chart.value.addSeries(scatterStore.scatter)
 }
 
 const chartObjectClick = (event) => {
@@ -81,14 +98,12 @@ const geoObjectHandler = (event) => {
   if (!event.region) return false
   const region = new Region(event.region.name)
   const coordinatesRegion = coordinatorStore.getCoordinates(region.name)
-  const coordinateOption = coordinatorStore.getCoordinateOption(region.name)
-  if (coordinatesRegion && coordinatesRegion.length > 2) loadCoordinatesRegion(region, coordinatesRegion, coordinateOption)
+  if (coordinatesRegion && coordinatesRegion.length > 2) loadCoordinatesRegion(region, coordinatesRegion)
   else loadCoordinatesClick(region, event)
 }
 
-const loadCoordinatesRegion = (region, coordinatesRegion, coordinateOption) => {
+const loadCoordinatesRegion = (region, coordinatesRegion) => {
   chart.value.setCoordinates(coordinatesRegion)
-  chart.value.changeBrushColor(coordinateOption.color)
   regionStore.setRegion(region)
 }
 
@@ -106,32 +121,51 @@ const loadCoordinatesClick = (region, event) => {
 }
 
 const seriesObjectHandler = (event) => {
-  if (event.componentSubType !== 'lines') return false
-  stateStore.toggleModal('delete_route')
+  if (event.componentSubType === 'lines') return stateStore.toggleModal('delete_route')
+  else if (event.componentSubType === 'scatter' && !tracerStore.getStateTracer()) {
+    console.log(event)
+    scatterStore.setTargetPoint(event.data)
+    return stateStore.toggleModal('delete_scatter')
+  } else return false
+
 }
 
 const deleteRoute = () => {
+  console.log('delete')
   const targetRegion = regionStore.getTargetRegion()
   coordinatorStore.deleteCoordinatesObject(targetRegion.name)
   stateStore.toggleModal('delete_route')
   chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
 }
 
+const deleteScatter = () => {
+  scatterStore.deletePoint(scatterStore.getTargetPoint())
+  stateStore.toggleModal('delete_scatter')
+  chart.value.render()
+}
+
 const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
 
 const onClick = (event) => {
-  const targetRegion = regionStore.getTargetRegion()
-  if (!targetRegion.name) return false
-  if (!tracerStore.getStateTracer()) tracerStore.start()
   const convertedCoordinates = chart.value.computedCoordinatesFromPixel([event.offsetX, event.offsetY])
-  coordinatorStore.addCoordinate(targetRegion.name, convertedCoordinates)
-  tracerStore.draw('point', targetRegion, convertedCoordinates)
-  chart.value.addCoordinates(convertedCoordinates)
+  if (tracerStore.getStateTracer()) {
+    const targetRegion = regionStore.getTargetRegion()
+    if (!targetRegion.name) return false
+    if (!tracerStore.getStateTracer()) tracerStore.start()
+    coordinatorStore.addCoordinate(targetRegion.name, convertedCoordinates)
+    tracerStore.draw('point', targetRegion, convertedCoordinates)
+    chart.value.addCoordinates(convertedCoordinates)
+  } else {
+    scatterStore.addPoint(convertedCoordinates)
+    chart.value.render()
+    console.log(chart.value)
+  }
+
 }
 
-const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
+// const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
 
-const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
+// const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
 
 const initKeypressEvents = () => {
   const keys = {
@@ -151,9 +185,13 @@ onMounted(async () => {
   tracerStore.init()
   coordinatorStore.init()
   brushStore.init()
+  scatterStore.init()
   initKeypressEvents()
 })
 
+onBeforeUnmount(() => {
+  stateStore.toggleModal('info_editor')
+})
 </script>
 <template>
   <div class="page">

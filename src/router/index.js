@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
 const Main = () => import('@/pages/Main.vue')
-const Download = () => import('@/pages/DownloadSVG.vue')
 const Editor = () => import('@/pages/Editor.vue')
 const Ui = () => import('@/pages/Ui.vue')
 const router = createRouter({
@@ -14,15 +13,6 @@ const router = createRouter({
             meta: {
                 name: 'Главная страница',
                 isVisibility: false
-            }
-        },
-        {
-            path: '/download',
-            name: 'download',
-            component: Download,
-            meta: {
-                name: 'Загрузка Карт',
-                isVisibility: true
             }
         },
         {
