@@ -1,5 +1,9 @@
 <script setup>
 defineProps({
+  titleHover: {
+    type: String,
+    default: ''
+  },
   title: {
     type: String,
     default: ''
@@ -14,7 +18,7 @@ defineProps({
 </script>
 
 <template>
-  <button>
+  <button :title="titleHover">
     <div class="icon" v-if="icon">
       <component :is="icon"/>
     </div>

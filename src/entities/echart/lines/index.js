@@ -29,4 +29,13 @@ export class Lines {
         }
         this.data = [{coords}]
     }
+
+    addCoordinateLine(coordinate) {
+        this.data[0].coords.push(coordinate)
+    }
+
+    updateCoordinates(coordinates) {
+        this.data[0].coords = coordinates
+    }
+
 }

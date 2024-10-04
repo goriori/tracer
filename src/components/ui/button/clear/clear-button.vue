@@ -5,7 +5,7 @@ import Clear from "@/components/ui/icons/clear.vue";
 </script>
 
 <template>
-  <Button :icon="Clear"/>
+  <Button title-hover="Очистить" :icon="Clear"/>
 </template>
 
 <style scoped lang="scss">

@@ -5,7 +5,7 @@ import Paint from "@/components/ui/icons/paint.vue";
 </script>
 
 <template>
-  <Button :icon="Paint"/>
+  <Button titleHover="Режим черчения" :icon="Paint"/>
 </template>
 
 <style scoped lang="scss">

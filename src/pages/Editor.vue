@@ -8,19 +8,17 @@ import {useApplicationStore} from "@/store/applicationStore.js";
 import {useStateStore} from "@/store/stateStore.js";
 import {EChart} from "@/entities/echart/index.js";
 import {Region} from "@/entities/region/index.js";
-import Header from "@/components/header/header.vue";
-import Footer from "@/components/footer/footer.vue";
 import Aside from "@/components/aside/aside.vue";
 import Modals from "@/components/modals/modals.vue";
-import {Scatter} from "@/entities/echart/scatter/index.js";
 import {useScatterStore} from "@/store/scatterStore.js";
-import {Lines} from "@/entities/echart/lines/index.js";
+import {useLineStore} from "@/store/lineStore.js";
 
 const stateStore = useStateStore()
 const applicationStore = useApplicationStore()
 const brushStore = useBrashStore()
 const regionStore = useRegionStore()
 const scatterStore = useScatterStore()
+const lineStore = useLineStore()
 const tracerStore = useTracerStore()
 const coordinatorStore = useCoordinatorStore()
 const targetTracerElement = ref(null)
@@ -81,7 +79,7 @@ const initChart = () => {
   chart.value.init()
   chart.value.registerMap(map.name, map.mapSvgText)
   chart.value.setRegions(regionStore.getRegions())
-  chart.value.addSeries(new Lines([[0, 0], [0, 0]], 'Way'))
+  chart.value.addSeries(lineStore.getLine())
   chart.value.on('click', chartObjectClick)
   chart.value.addSeries(scatterStore.scatter)
 }
@@ -103,8 +101,9 @@ const geoObjectHandler = (event) => {
 }
 
 const loadCoordinatesRegion = (region, coordinatesRegion) => {
-  chart.value.setCoordinates(coordinatesRegion)
+  lineStore.getLine().updateCoordinates(coordinatesRegion)
   regionStore.setRegion(region)
+  chart.value.render()
 }
 
 const loadCoordinatesClick = (region, event) => {
@@ -117,7 +116,8 @@ const loadCoordinatesClick = (region, event) => {
     startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
   }
   regionStore.setRegion(region)
-  chart.value.setCoordinates(startCoordinates)
+  lineStore.getLine().updateCoordinates(startCoordinates)
+  chart.value.render()
 }
 
 const seriesObjectHandler = (event) => {
@@ -135,7 +135,8 @@ const deleteRoute = () => {
   const targetRegion = regionStore.getTargetRegion()
   coordinatorStore.deleteCoordinatesObject(targetRegion.name)
   stateStore.toggleModal('delete_route')
-  chart.value.setCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
+  lineStore.getLine().updateCoordinates(coordinatorStore.getCoordinates(targetRegion.name))
+  chart.value.render()
 }
 
 const deleteScatter = () => {
@@ -144,7 +145,10 @@ const deleteScatter = () => {
   chart.value.render()
 }
 
-const clearChart = () => chart.value.setCoordinates([[0, 0], [0, 0]])
+const clearChart = () => {
+  lineStore.getLine().updateCoordinates([[0, 0], [0, 0]])
+  chart.value.render()
+}
 
 const onClick = (event) => {
   const convertedCoordinates = chart.value.computedCoordinatesFromPixel([event.offsetX, event.offsetY])
@@ -154,7 +158,8 @@ const onClick = (event) => {
     if (!tracerStore.getStateTracer()) tracerStore.start()
     coordinatorStore.addCoordinate(targetRegion.name, convertedCoordinates)
     tracerStore.draw('point', targetRegion, convertedCoordinates)
-    chart.value.addCoordinates(convertedCoordinates)
+    lineStore.getLine().addCoordinateLine(convertedCoordinates)
+    chart.value.render()
   } else {
     scatterStore.addPoint(convertedCoordinates)
     chart.value.render()
@@ -183,6 +188,7 @@ const initKeypressEvents = () => {
 onMounted(async () => {
   if (targetTracerElement.value) chart.value = new EChart(targetTracerElement.value)
   tracerStore.init()
+  lineStore.init()
   coordinatorStore.init()
   brushStore.init()
   scatterStore.init()

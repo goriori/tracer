@@ -25,7 +25,7 @@ const changeBrush = (brush) => {
 </script>
 
 <template>
-  <BrushDropDown @change-brush="changeBrush"/>
+  <BrushDropDown title="Выбрать кисть" @change-brush="changeBrush"/>
 </template>
 
 <style scoped lang="scss">

@@ -4,7 +4,7 @@ import Button from "@/components/ui/button/button.vue";
 </script>
 
 <template>
-  <Button title="Т"/>
+  <Button title-hover="Режим дабавления точки" title="Т"/>
 </template>
 
 <style scoped lang="scss">

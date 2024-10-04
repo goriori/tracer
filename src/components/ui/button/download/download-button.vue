@@ -5,7 +5,7 @@ import Download from "@/components/ui/icons/download.vue";
 </script>
 
 <template>
-  <Button :icon="Download"/>
+  <Button title-hover="Загрузить карту" :icon="Download"/>
 </template>
 
 <style scoped lang="scss">

@@ -42,7 +42,7 @@ const onClick = () => {
 </script>
 
 <template>
-  <PaintButton @click="onClick" :class="[isDrawing? 'active':'']"/>
+  <PaintButton  @click="onClick" :class="[isDrawing? 'active':'']"/>
 </template>
 
 <style scoped lang="scss">

@@ -61,11 +61,6 @@ export class EChart {
         return this.chart.convertFromPixel('geo', coordinates);
     }
 
-    addCoordinates(coordinates) {
-        this.coordinates.push(coordinates);
-        this.render();
-    }
-
     removeLastCoordinates() {
         this.coordinates.pop();
         this.render();

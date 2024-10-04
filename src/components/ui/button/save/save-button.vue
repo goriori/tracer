@@ -5,7 +5,7 @@ import Button from "@/components/ui/button/button.vue";
 </script>
 
 <template>
-  <Button :icon="Save"/>
+  <Button title-hover="Сохранить конфиг" :icon="Save"/>
 </template>
 
 <style scoped lang="scss">

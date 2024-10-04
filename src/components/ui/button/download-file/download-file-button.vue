@@ -5,7 +5,7 @@ import DownloadFile from "@/components/ui/icons/download-file.vue";
 </script>
 
 <template>
-  <Button :icon="DownloadFile"/>
+  <Button title-hover="Загрузить конфиг" :icon="DownloadFile"/>
 </template>
 
 <style scoped lang="scss">
