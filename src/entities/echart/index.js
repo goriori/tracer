@@ -76,7 +76,6 @@ export class EChart {
 
     render() {
         console.log('render')
-        console.log(this.options)
         this.chart.setOption(this.options);
     }
 

@@ -12,6 +12,7 @@ import Aside from "@/components/aside/aside.vue";
 import Modals from "@/components/modals/modals.vue";
 import {useScatterStore} from "@/store/scatterStore.js";
 import {useLineStore} from "@/store/lineStore.js";
+import {useKeypress} from "@/utils/useKeypress.js";
 
 const stateStore = useStateStore()
 const applicationStore = useApplicationStore()
@@ -21,14 +22,19 @@ const scatterStore = useScatterStore()
 const lineStore = useLineStore()
 const tracerStore = useTracerStore()
 const coordinatorStore = useCoordinatorStore()
+const {addKeyEvent} = useKeypress()
 const targetTracerElement = ref(null)
 const targetSvgElement = ref(null)
 const chart = ref(null)
 
+
 const appEvents = {
   download_map: () => initChart(),
   download_json: () => initChart(),
-  start_drawing: () => targetTracerElement.value.addEventListener('click', eventTargetElementHandler),
+  start_drawing: () => {
+    targetTracerElement.value.addEventListener('click', eventTargetElementHandler)
+    tracerStore.stopScatter()
+  },
   stop_drawing: () => targetTracerElement.value.removeEventListener('click', eventTargetElementHandler),
   // change_brush_color: () => {
   //   setBrushColor()
@@ -38,16 +44,13 @@ const appEvents = {
   save_all: () => console.log('save all'),
   // change_brush: () => setBrush(),
   change_state_editor: () => {
-    console.log('change state editor')
   },
   start_create_point: () => {
     targetTracerElement.value.addEventListener('click', eventTargetElementHandler)
-    console.log('add point')
+    tracerStore.stopDraw()
   },
-  stop_create_point: () => {
-    targetTracerElement.value.removeEventListener('click', eventTargetElementHandler)
-    console.log('stop add point')
-  },
+  stop_create_point: () => targetTracerElement.value.removeEventListener('click', eventTargetElementHandler)
+
 }
 
 const modalEvents = {
@@ -123,7 +126,6 @@ const loadCoordinatesClick = (region, event) => {
 const seriesObjectHandler = (event) => {
   if (event.componentSubType === 'lines') return stateStore.toggleModal('delete_route')
   else if (event.componentSubType === 'scatter' && !tracerStore.getStateTracer()) {
-    console.log(event)
     scatterStore.setTargetPoint(event.data)
     return stateStore.toggleModal('delete_scatter')
   } else return false
@@ -131,7 +133,6 @@ const seriesObjectHandler = (event) => {
 }
 
 const deleteRoute = () => {
-  console.log('delete')
   const targetRegion = regionStore.getTargetRegion()
   coordinatorStore.deleteCoordinatesObject(targetRegion.name)
   stateStore.toggleModal('delete_route')
@@ -155,7 +156,7 @@ const onClick = (event) => {
   if (tracerStore.getStateTracer()) {
     const targetRegion = regionStore.getTargetRegion()
     if (!targetRegion.name) return false
-    if (!tracerStore.getStateTracer()) tracerStore.start()
+    if (!tracerStore.getStateTracer()) tracerStore.startDraw()
     coordinatorStore.addCoordinate(targetRegion.name, convertedCoordinates)
     tracerStore.draw('point', targetRegion, convertedCoordinates)
     lineStore.getLine().addCoordinateLine(convertedCoordinates)
@@ -163,27 +164,53 @@ const onClick = (event) => {
   } else {
     scatterStore.addPoint(convertedCoordinates)
     chart.value.render()
-    console.log(chart.value)
   }
+}
 
+const keyCtrlZHandler = () => {
+  if (tracerStore.getHistory().length === 0) return false
+  const lastHistory = tracerStore.backStep()
+  chart.value.removeLastCoordinates()
+}
+
+const keyFHandler = () => {
+  const haveTargetObject = Object.keys(regionStore.getTargetRegion()).length > 0
+  const stateDraw = tracerStore.getStateTracer()
+  if (!haveTargetObject) return alert('Чтобы начать рисовать, выберите объект на карте')
+  if (stateDraw) {
+    tracerStore.stopDraw()
+    appEvents.stop_drawing()
+  } else {
+    tracerStore.stopScatter()
+    tracerStore.startDraw()
+    appEvents.start_drawing()
+  }
+}
+
+const keyGHandler = () => {
+  const haveMap = applicationStore.getMapSvg()
+  if (!haveMap) return alert('Чтобы раставить точки вам нужно загрузить карту')
+  const stateScatter = tracerStore.getStateTracerScattering()
+  if (stateScatter) {
+    tracerStore.stopScatter()
+    appEvents.stop_create_point()
+  } else {
+    tracerStore.stopDraw()
+    tracerStore.startScatter()
+    appEvents.start_create_point()
+  }
+}
+
+const initKeypressEvent = () => {
+  addKeyEvent('\x1A', keyCtrlZHandler)
+  addKeyEvent('f', keyFHandler)
+  addKeyEvent('g', keyGHandler)
 }
 
 // const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
 
 // const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
 
-const initKeypressEvents = () => {
-  const keys = {
-    '\x1A': () => {
-      if (tracerStore.getHistory().length === 0) return false
-      const lastHistory = tracerStore.backStep()
-      chart.value.removeLastCoordinates()
-    }
-  }
-  window.addEventListener('keypress', (event) => {
-    if (event.key in keys) keys[event.key]()
-  })
-}
 
 onMounted(async () => {
   if (targetTracerElement.value) chart.value = new EChart(targetTracerElement.value)
@@ -192,7 +219,7 @@ onMounted(async () => {
   coordinatorStore.init()
   brushStore.init()
   scatterStore.init()
-  initKeypressEvents()
+  initKeypressEvent()
 })
 
 onBeforeUnmount(() => {

@@ -7,12 +7,13 @@ export const useTracerStore = defineStore('tracer', () => {
     const tracer = ref({})
 
     const getStateTracer = () => tracer.value.drawing
+    const getStateTracerScattering = () => tracer.value.scattering
     const init = () => tracer.value = new Tracer()
 
-    const start = () => tracer.value.start()
-
-    const stop = () => tracer.value.stop()
-
+    const startDraw = () => tracer.value.startDraw()
+    const startScatter = () => tracer.value.startScatter()
+    const stopDraw = () => tracer.value.stopDraw()
+    const stopScatter = () => tracer.value.stopScatter()
     const clear = () => tracer.value.clear()
     const draw = (type, object, coordinates) => tracer.value.draw(type, object, coordinates)
 
@@ -23,9 +24,12 @@ export const useTracerStore = defineStore('tracer', () => {
     return {
         tracer,
         getStateTracer,
+        getStateTracerScattering,
         init,
-        start,
-        stop,
+        startDraw,
+        startScatter,
+        stopDraw,
+        stopScatter,
         clear,
         draw,
         backStep,

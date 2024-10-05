@@ -11,23 +11,20 @@ const applicationStore = useApplicationStore()
 const regionStore = useRegionStore()
 const emits = defineEmits(["start-drawing", 'stop-drawing'])
 
-const isDrawing = ref(false)
 
 const onStartDrawing = () => {
-  isDrawing.value = true
-  tracerStore.start()
+  tracerStore.startDraw()
   emits('start-drawing', 'start_drawing')
 }
 const onStopDrawing = () => {
-  isDrawing.value = false
-  tracerStore.stop()
+  tracerStore.stopDraw()
   emits('stop-drawing', 'stop_drawing')
 }
 const onClick = () => {
   const haveMap = applicationStore.getMapSvg()
   if (haveMap) {
     const haveTargetObject = Object.keys(regionStore.getTargetRegion()).length > 0
-    if (isDrawing.value) {
+    if (tracerStore.getStateTracer()) {
       onStopDrawing()
     } else if (!haveTargetObject) {
       alert('Чтобы начать рисовать, выберите объект на карте')
@@ -42,7 +39,7 @@ const onClick = () => {
 </script>
 
 <template>
-  <PaintButton  @click="onClick" :class="[isDrawing? 'active':'']"/>
+  <PaintButton @click="onClick" :class="[tracerStore.getStateTracer() ? 'active':'']"/>
 </template>
 
 <style scoped lang="scss">

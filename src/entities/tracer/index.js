@@ -1,13 +1,17 @@
-
 export class Tracer {
 
     constructor() {
         this.TYPES_DRAWING = ['point']
         this.history = [];
         this.drawing = false;
+        this.scattering = false
     }
 
-    start() {
+    startScatter() {
+        this.scattering = true
+    }
+
+    startDraw() {
         this.drawing = true;
     }
 
@@ -47,7 +51,11 @@ export class Tracer {
         this.drawing = false
     }
 
-    stop() {
+    stopDraw() {
         this.drawing = false;
+    }
+
+    stopScatter() {
+        this.scattering = false
     }
 }
