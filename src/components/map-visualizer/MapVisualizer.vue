@@ -31,6 +31,7 @@ const initMapVisualizer = () => {
   const configMap = props.config?.map
   const configRegions = props.config?.regions.map(region => new Region(region.name))
   if (!configMap) throw new Error('Not exist option map in config')
+  console.log(configRegions)
   mapVisitor.value = new EChart(targetMapElement.value)
   mapVisitor.value.init()
   mapVisitor.value.registerMap('map', configMap.mapSvgTxt)

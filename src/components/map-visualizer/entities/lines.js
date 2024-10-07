@@ -9,6 +9,9 @@ export class Lines {
                 show: true
             }
         }
+        this.tooltip = {
+            show: false
+        }
         this.polyline = true
         this.lineStyle = {
             color: '#c46e54',
