@@ -1,9 +1,8 @@
-export class Lines {
+import {Series} from "@/entities/echart/index.js";
+
+export class Lines extends Series {
     constructor(coords = [[0, 0], [0, 0]], name = 'Way') {
-        this.name = name
-        this.type = 'lines'
-        this.coordinateSystem = 'geo'
-        this.geoIndex = 0
+        super(name, 'lines', 'geo')
         this.emphasis = {
             label: {
                 show: true
@@ -38,4 +37,9 @@ export class Lines {
         this.data[0].coords = coordinates
     }
 
+    removeLastCoordinate() {
+        if (this.data[0].coords.length === 2) return false
+        this.data[0].coords.pop()
+        return true
+    }
 }

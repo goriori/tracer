@@ -1,9 +1,8 @@
-export class Scatter {
+import {Series} from "@/entities/echart/index.js";
+
+export class Scatter extends Series {
     constructor(symbol = 'circle', name = 'Terminal') {
-        this.name = name
-        this.type = 'scatter'
-        this.coordinateSystem = 'geo'
-        this.geoIndex = 0
+        super(name, 'circle', 'geo')
         this.symbol = symbol
         this.symbolSize = 20
         this.label = {

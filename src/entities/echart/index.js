@@ -1,6 +1,45 @@
 import * as echarts from 'echarts'
 import {Scatter} from "@/entities/echart/scatter/index.js";
 
+
+export class Geo {
+    constructor(regions) {
+        this.map = null
+        this.roam = true
+        this.label = {
+            show: false
+        }
+        this.emphasis = {
+            itemStyle: {
+                color: undefined
+            },
+            label: {
+                show: false
+            }
+        }
+        this.select = {
+            itemStyle: {
+                color: 'red',
+            },
+            label: {
+                color: 'red'
+            }
+        }
+        this.regions = [...regions]
+    }
+}
+
+
+export class Series {
+    constructor(name, type, system) {
+        this.name = name
+        this.type = type
+        this.coordinateSystem = system
+        this.geoIndex = 0
+        this.data = []
+    }
+}
+
 export class EChart {
     constructor(element) {
         this.element = element;
@@ -8,7 +47,6 @@ export class EChart {
         this.mapSvgText = null
         this.coordinates = [[0, 0], [0, 0]]
         this.regions = []
-
         this.options = {
             title: {
                 text: 'Расчерчиватель',
@@ -16,31 +54,7 @@ export class EChart {
                 bottom: 10
             },
             tooltip: {},
-            geo: {
-                map: null,
-                roam: true,
-                label: {
-                    show: false
-                },
-                emphasis: {
-                    itemStyle: {
-                        color: undefined
-                    },
-                    label: {
-                        show: false
-                    }
-                },
-                select: {
-                    itemStyle: {
-                        color: 'red',
-                    },
-                    label: {
-                        color: 'red'
-                    }
-                },
-                regions: [...this.regions]
-            },
-
+            geo: new Geo(this.regions),
             series: []
         };
 
@@ -48,7 +62,6 @@ export class EChart {
 
     init() {
         this.chart = echarts.init(this.element, null, {renderer: 'svg'});
-        this.chart.is
     }
 
     registerMap(name, map) {
@@ -61,10 +74,6 @@ export class EChart {
         return this.chart.convertFromPixel('geo', coordinates);
     }
 
-    removeLastCoordinates() {
-        this.coordinates.pop();
-        this.render();
-    }
 
     on(event, callback) {
         this.chart.on(event, callback);
@@ -86,7 +95,6 @@ export class EChart {
     }
 
     addRegion(region) {
-        console.log(this.regions)
         this.regions.push(region)
         this.options.geo.regions = this.regions
         this.render()
@@ -99,10 +107,7 @@ export class EChart {
     }
 
     deleteSeries(seriesName) {
-        console.log(this.options.series)
         this.options.series = this.options.series.filter(series => series.name !== seriesName)
-        console.log(this.options.series)
-        console.log(this.chart)
         this.render()
     }
 

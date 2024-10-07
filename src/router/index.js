@@ -20,7 +20,7 @@ const router = createRouter({
             name: 'Editor',
             component: Editor,
             meta: {
-                name: 'Редактор',
+                name: 'Редактор ',
                 isVisibility: true
             }
         },

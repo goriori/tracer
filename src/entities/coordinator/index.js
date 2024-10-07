@@ -40,8 +40,17 @@ export class Coordinator {
         const object = this.coordinates.find(object => object.name === name)
         const coordinates = object.coordinates
         const [x, y] = coordinates[0]
-        object.coordinates = [[x, y], [x + 1, y + 1]]
+        object.coordinates = [[x, y], [x + 0.00001, y]]
     }
+
+    deleteCoordinateObject(name) {
+        const object = this.coordinates.find(object => object.name === name)
+        if (!object) return false
+        if (object.coordinates.length === 2) return false
+        object.coordinates.pop()
+    }
+
+    f
 
     clearCoordinates() {
         this.coordinates = [];

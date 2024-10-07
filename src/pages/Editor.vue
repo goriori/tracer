@@ -6,13 +6,13 @@ import {useCoordinatorStore} from "@/store/coordinatorStore.js";
 import {useRegionStore} from "@/store/regionStore.js";
 import {useApplicationStore} from "@/store/applicationStore.js";
 import {useStateStore} from "@/store/stateStore.js";
+import {useScatterStore} from "@/store/scatterStore.js";
+import {useLineStore} from "@/store/lineStore.js";
+import {useKeypress} from "@/utils/useKeypress.js";
 import {EChart} from "@/entities/echart/index.js";
 import {Region} from "@/entities/region/index.js";
 import Aside from "@/components/aside/aside.vue";
 import Modals from "@/components/modals/modals.vue";
-import {useScatterStore} from "@/store/scatterStore.js";
-import {useLineStore} from "@/store/lineStore.js";
-import {useKeypress} from "@/utils/useKeypress.js";
 
 const stateStore = useStateStore()
 const applicationStore = useApplicationStore()
@@ -36,13 +36,8 @@ const appEvents = {
     tracerStore.stopScatter()
   },
   stop_drawing: () => targetTracerElement.value.removeEventListener('click', eventTargetElementHandler),
-  // change_brush_color: () => {
-  //   setBrushColor()
-  //   coordinatorStore.setOptionCoordinate(regionStore.getTargetRegion().name, {color: brushStore.getColor()})
-  // },
   clear_all: () => clearChart(),
   save_all: () => console.log('save all'),
-  // change_brush: () => setBrush(),
   change_state_editor: () => {
   },
   start_create_point: () => {
@@ -114,7 +109,7 @@ const loadCoordinatesClick = (region, event) => {
   const coordinateRegion = [offsetX, offsetY]
   const [x, y] = chart.value.computedCoordinatesFromPixel(coordinateRegion)
   const haveStartPosition = coordinatorStore.getCoordinates(region.name)
-  const startCoordinates = [[x, y], [x + 1, y + 1]]
+  const startCoordinates = [[x, y], [x + 0.00001, y]]
   if (!haveStartPosition || haveStartPosition.length === 0) {
     startCoordinates.forEach(coordinate => coordinatorStore.addCoordinate(region.name, coordinate))
   }
@@ -169,8 +164,11 @@ const onClick = (event) => {
 
 const keyCtrlZHandler = () => {
   if (tracerStore.getHistory().length === 0) return false
-  const lastHistory = tracerStore.backStep()
-  chart.value.removeLastCoordinates()
+  if (!regionStore.getTargetRegion()) return false
+  tracerStore.backStep()
+  lineStore.getLine().removeLastCoordinate()
+  coordinatorStore.deleteCoordinateObject(regionStore.getTargetRegion().name)
+  chart.value.render()
 }
 
 const keyFHandler = () => {
@@ -206,12 +204,6 @@ const initKeypressEvent = () => {
   addKeyEvent('f', keyFHandler)
   addKeyEvent('g', keyGHandler)
 }
-
-// const setBrush = () => chart.value.changeBrush(brushStore.getBrush())
-
-// const setBrushColor = () => chart.value.changeBrushColor(brushStore.getColor())
-
-
 onMounted(async () => {
   if (targetTracerElement.value) chart.value = new EChart(targetTracerElement.value)
   tracerStore.init()
@@ -221,7 +213,6 @@ onMounted(async () => {
   scatterStore.init()
   initKeypressEvent()
 })
-
 onBeforeUnmount(() => {
   stateStore.toggleModal('info_editor')
 })

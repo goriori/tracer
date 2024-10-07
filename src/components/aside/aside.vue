@@ -41,9 +41,6 @@ const onEmitHandler = (type) => {
   <aside>
     <Button v-if="!menuActive" :icon="Menu" @click="toggleActive" class="menu"/>
     <Button v-if="menuActive" :icon="Close" @click="toggleActive" class="close"/>
-    <!--    <BrushColorAction v-if="menuActive" @change-color="onEmitHandler" class="action"/>-->
-    <!--        <EditButton class="action"/>-->
-    <!--    <BrushAction v-if="menuActive" @change-brush="onEmitHandler" class="action"/>-->
     <DrawAction v-if="menuActive" @start-drawing="onEmitHandler" @stop-drawing="onEmitHandler" class="action"/>
     <DownloadSbgAction v-if="menuActive" @download="onEmitHandler" class="action"/>
     <DownloadJsonAction v-if="menuActive" @download="onEmitHandler" class="action"/>
